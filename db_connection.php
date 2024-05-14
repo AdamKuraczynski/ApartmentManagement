@@ -1,9 +1,9 @@
 <?php
 // Database connection details
 $servername = "localhost";
-$username = "your_username";
-$password = "your_password";
-$dbname = "your_database";
+$username = "root";
+$password = "";
+$dbname = "apartment_management";
 
 // Create connection
 $conn = mysqli_connect($servername, $username, $password, $dbname);

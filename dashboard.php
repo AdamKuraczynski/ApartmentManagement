@@ -18,7 +18,7 @@ $user = mysqli_fetch_assoc($result);
 
 // Display dashboard based on user type
 if ($user['user_type'] == 'administrator') {
-    echo "Welcome, Administrator!";
+    echo "Welcome, Administrator!!!";
     // Display administrator dashboard
 } else {
     echo "Welcome, Renter!";
