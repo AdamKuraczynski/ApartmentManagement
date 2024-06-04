@@ -7,9 +7,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = sanitize_input($_POST["email"]);
     $password = password_hash(sanitize_input($_POST["password"]), PASSWORD_BCRYPT);
 
-    $sql = "INSERT INTO users (username, email, password_hash) VALUES ('$username', '$email', '$password')";
+    $sql = "INSERT INTO Users (username, email, password_hash) VALUES ('$username', '$email', '$password')";
     if ($conn->query($sql) === TRUE) {
-        echo "Registration successful!";
+        $user_id = $conn->insert_id;
+
+        $sql = "INSERT INTO Tenants (user_id) VALUES ('$user_id')";
+        if ($conn->query($sql) === TRUE) {
+            echo "Registration successful!";
+            header("Location: /apartmentmanagement/login.php");
+            exit();
+        } else {
+            echo "Error: " . $sql . "<br>" . $conn->error;
+        }
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
     }

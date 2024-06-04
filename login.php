@@ -1,30 +1,53 @@
 <?php
 session_start();
-include('includes/db.php');
-include('includes/functions.php');
+require_once('includes/db.php');
+require_once('includes/functions.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = sanitize_input($_POST["username"]);
-    if (isset($_POST["password"])) {
-        $password = sanitize_input($_POST["password"]);
+    $password = sanitize_input($_POST["password"]);
 
-        $sql = "SELECT * FROM users WHERE username='$username'";
+    function verify_user($conn, $username, $password) {
+        $sql = "SELECT * FROM Users WHERE username='$username'";
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             if (password_verify($password, $row['password_hash'])) {
                 $_SESSION['username'] = $username;
-                header("Location: index.php");
-                exit();
+                $_SESSION['user_id'] = $row['user_id'];
+                return $row['user_id'];
             } else {
                 echo "Invalid password.";
+                return false;
             }
-        } else {
-            echo "No user found.";
         }
-    } else {
-        echo "Password field is missing.";
+        echo "No user found.";
+        return false;
+    }
+    
+    $user_id = verify_user($conn, $username, $password);
+
+    if ($user_id) {
+        if (check_user_role($conn, $user_id, 'administrator')) {
+            $_SESSION['role'] = 'administrator';
+            header("Location: /apartmentmanagement/dashboards/administrator_dashboard.php");
+            exit();
+        }
+
+        if (check_user_role($conn, $user_id, 'owner')) {
+            $_SESSION['role'] = 'owner';
+            header("Location: /apartmentmanagement/dashboards/owner_dashboard.php");
+            exit();
+        }
+
+        if (check_user_role($conn, $user_id, 'tenant')) {
+            $_SESSION['role'] = 'tenant';
+            header("Location: /apartmentmanagement/dashboards/tenant_dashboard.php");
+            exit();
+        }
+
+        echo "User role not found.";
     }
 
     $conn->close();
