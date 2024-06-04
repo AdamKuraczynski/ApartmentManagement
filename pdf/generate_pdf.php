@@ -1,6 +1,7 @@
 <?php
 require('../pdf/fpdf.php');
 include '../includes/db.php';
+include('../auth.php');
 
 class PDF extends FPDF {
     function Header() {
