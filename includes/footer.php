@@ -9,7 +9,7 @@
         <div class="header-content">
             <img src="/apartmentmanagement/images/logo.jpeg" alt="Logo" class="logo">
             <h1>Apartment Management System</h1>
-        </div>
+        </div><br>
         <nav>
             <a href="/apartmentmanagement/index.php">Home</a>
             <a href="/apartmentmanagement/expenses/view_expenses.php">Expenses</a>

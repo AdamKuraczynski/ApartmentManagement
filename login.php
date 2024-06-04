@@ -31,6 +31,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In</title>
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+</head>
+<header>
+        <div class="header-content">
+            <img src="/apartmentmanagement/images/logo.jpeg" alt="Logo" class="logo">
+            <h1>Apartment Management System</h1>
+        </div>
+</header>
+
+<br>
 <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
     Username: <input type="text" name="username" required><br>
     Password: <input type="password" name="password" required><br>
