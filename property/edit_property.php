@@ -11,16 +11,17 @@ if (!isset($_SESSION['user_id']) ||
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Handle form submission to add property
+    // Handle form submission to edit property
+    $property_id = $_POST['property_id'];
     $property_name = $_POST['property_name'];
     // Add other property fields here
     
-    // SQL query to insert property
-    $stmt = $conn->prepare("INSERT INTO Properties (property_name, ...) VALUES (?, ...)");
-    $stmt->bind_param("s", $property_name);
+    // SQL query to update property
+    $stmt = $conn->prepare("UPDATE Properties SET property_name = ? WHERE property_id = ?");
+    $stmt->bind_param("si", $property_name, $property_id);
     $stmt->execute();
     
-    echo "Property added successfully.";
+    echo "Property updated successfully.";
 }
 
 ?>
@@ -30,17 +31,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Property</title>
+    <title>Edit Property</title>
     <link rel="stylesheet" type="text/css" href="/apartmentmanagement/css/styles.css">
 </head>
 <body>
     <?php include('../includes/header.php'); ?>
     <main>
-        <h2>Add Property</h2>
-        <form action="add_property.php" method="post">
+        <h2>Edit Property</h2>
+        <form action="edit_property.php" method="post">
+            <input type="hidden" name="property_id" value="<?php echo $_GET['property_id']; ?>">
             <input type="text" name="property_name" placeholder="Property Name" required>
             <!-- Add other property fields here -->
-            <button type="submit">Add Property</button>
+            <button type="submit">Edit Property</button>
         </form>
     </main>
     <?php include('../includes/footer.php'); ?>
