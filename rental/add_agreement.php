@@ -1,7 +1,6 @@
 <?php include('../auth.php'); ?>
 <?php
 include '../includes/db.php';
-include '../includes/header.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $property_id = $_POST['property_id'];
@@ -22,15 +21,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-<h2>Add New Rental Agreement</h2>
-<form method="post" action="">
-    Property ID: <input type="text" name="property_id"><br>
-    Tenant ID: <input type="text" name="tenant_id"><br>
-    Start Date: <input type="date" name="start_date"><br>
-    End Date: <input type="date" name="end_date"><br>
-    Rent Amount: <input type="text" name="rent_amount"><br>
-    Security Deposit: <input type="text" name="security_deposit"><br>
-    <input type="submit" value="Add Agreement">
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add agreements</title>
+    <link rel="stylesheet" type="text/css" href="/apartmentmanagement/css/styles.css">
+</head>
+<body>
 
-<?php include '../includes/footer.php'; ?>
+    <?php include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/header.php'); ?>
+
+    <main>
+
+    <h2>Add New Rental Agreement</h2>
+    <form method="post" action="">
+        Property ID: <input type="text" name="property_id"><br>
+        Tenant ID: <input type="text" name="tenant_id"><br>
+        Start Date: <input type="date" name="start_date"><br>
+        End Date: <input type="date" name="end_date"><br>
+        Rent Amount: <input type="text" name="rent_amount"><br>
+        Security Deposit: <input type="text" name="security_deposit"><br>
+        <input type="submit" value="Add Agreement">
+    </form>
+        
+    </main>
+
+    <?php include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/footer.php'); ?>
+
+</body>
+</html>

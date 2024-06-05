@@ -1,27 +1,22 @@
-<?php
-include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/auth.php'); 
-include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/functions.php'); 
-?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Apartment Management</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Properties</title>
     <link rel="stylesheet" type="text/css" href="/apartmentmanagement/css/styles.css">
 </head>
 <body>
-    <header>
-        <h1>Apartment Management System</h1>
-        <nav>
-    <a href="/apartmentmanagement/index.php">Home</a>
-    <?php if (check_user_role('administrator')): ?>
-        <a href="/apartmentmanagement/admin_dashboard.php">Admin Dashboard</a>
-    <?php endif; ?>
-    <?php if (check_user_role('owner')): ?>
-        <a href="/apartmentmanagement/owner_dashboard.php">Owner Dashboard</a>
-    <?php endif; ?>
-    <?php if (check_user_role('tenant')): ?>
-        <a href="/apartmentmanagement/tenant_dashboard.php">Tenant Dashboard</a>
-    <?php endif; ?>
-        </nav>
-    </header>
+
+    <?php include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/header.php'); ?>
+
     <main>
+       
+        
+
+    </main>
+
+    <?php include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/footer.php'); ?>
+
+</body>
+</html>

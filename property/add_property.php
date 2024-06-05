@@ -1,7 +1,20 @@
-<?php include('../auth.php'); ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add property</title>
+    <link rel="stylesheet" type="text/css" href="/apartmentmanagement/css/styles.css">
+</head>
+<body>
+
+    <?php include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/header.php'); ?>
+
+    <main>
+        
+    <?php include('../auth.php'); ?>
 <?php
 include '../includes/db.php';
-include '../includes/header.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $owner_id = $_POST['owner_id'];
@@ -34,5 +47,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     Description: <textarea name="description"></textarea><br>
     <input type="submit" value="Add Property">
 </form>
+        
+    </main>
 
-<?php include '../includes/footer.php'; ?>
+    <?php include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/footer.php'); ?>
+
+</body>
+</html>

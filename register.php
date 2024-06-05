@@ -27,25 +27,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration</title>
-    <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <title>Register</title>
+    <link rel="stylesheet" type="text/css" href="/apartmentmanagement/css/styles.css">
 </head>
-<header>
-        <div class="header-content">
-            <img src="/apartmentmanagement/images/logo.jpeg" alt="Logo" class="logo">
-            <h1>Apartment Management System</h1>
-        </div>
-</header>
+<body>
 
-<br>
-<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-    Username: <input type="text" name="username" required><br>
-    Email: <input type="email" name="email" required><br>
-    Password: <input type="password" name="password" required><br>
-    <input type="submit" value="Register">
-</form>
+    <?php include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/header.php'); ?>
 
-<p><a href="login.php">Log in</a></p>
+    <main>
+    
+    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        Username: <input type="text" name="username" required><br>
+        Email: <input type="email" name="email" required><br>
+        Password: <input type="password" name="password" required><br>
+        <input type="submit" value="Register">
+    </form>
+
+    <div class="form-footer">
+            <p>Already have an account?<a href="login.php"> Log in!</a></p>
+    </div>
+        
+    </main>
+
+    <?php include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/footer.php'); ?>
+
+</body>
+</html>

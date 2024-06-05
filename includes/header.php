@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Apartment Management</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Header</title>
     <link rel="stylesheet" type="text/css" href="/apartmentmanagement/css/styles.css">
 </head>
 <body>
@@ -33,8 +35,5 @@
             ?>
         </nav>
     </header>
-    <main>
-
-    </main>
 </body>
 </html>

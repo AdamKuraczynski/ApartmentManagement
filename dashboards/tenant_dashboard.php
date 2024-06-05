@@ -16,17 +16,17 @@ if (!isset($_SESSION['user_id']) || !check_user_role($conn, $_SESSION['user_id']
     <link rel="stylesheet" type="text/css" href="/apartmentmanagement/css/styles.css">
 </head>
 <body>
-    <header>
-        <?php include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/header.php'); ?>
-    </header>
+
+    <?php include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/header.php'); ?>
+
     <main>
-        <h1>Welcome, <?php echo $_SESSION['username']; ?>!</h1>
+        <h5>Welcome, <?php echo $_SESSION['username']; ?>!</h5>
         <p>Here you can manage your rental agreements and view payment history.</p>
 
         
     </main>
-    <footer>
-        <?php include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/footer.php'); ?>
-    </footer>
+
+    <?php include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/footer.php'); ?>
+    
 </body>
 </html>
