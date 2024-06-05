@@ -8,10 +8,7 @@
 - Edit line 19 in mail.php with temporary email for testing If communication does not work
 
 
-#### To do:
-
-### Other tasks
-- [ ] Restrict access for specific roles to each file
+## To do:
 
 ### Role Management
 - [ ] **Administrators**: Manage properties, tenants, and overall system.
@@ -37,4 +34,4 @@
 - [ ] **DocumentTypes**: Define types of documents.
 
 ### Notifications
-- [x] **Notifications**: Send notifications to users regarding various events.
+- [ ] **Notifications**: Send notifications to users regarding various events.
