@@ -11,30 +11,30 @@
 #### To do:
 
 ### Other tasks
-- [x] Restrict access for specific roles to each file
+- [ ] Restrict access for specific roles to each file
 
 ### Role Management
-- [x] **Administrators**: Manage properties, tenants, and overall system.
-- [x] **Owners**: Manage their properties and tenant interactions.
-- [x] **Tenants**: Manage rental agreements and contact details.
+- [ ] **Administrators**: Manage properties, tenants, and overall system.
+- [ ] **Owners**: Manage their properties and tenant interactions.
+- [ ] **Tenants**: Manage rental agreements and contact details.
 
 ### Property Management
-- [x] **Addresses**: Store property address details.
-- [x] **Properties**: Track property information, including owner, type, and rental details.
-- [x] **PropertyTypes**: Define types of properties.
+- [ ] **Addresses**: Store property address details.
+- [ ] **Properties**: Track property information, including owner, type, and rental details.
+- [ ] **PropertyTypes**: Define types of properties.
 
 ### Rental Management
-- [x] **RentalAgreements**: Manage rental agreements, including start/end dates and payment terms.
-- [x] **Payments**: Record payments related to rental agreements.
-- [x] **PaymentTypes**: Define types of payments.
+- [ ] **RentalAgreements**: Manage rental agreements, including start/end dates and payment terms.
+- [ ] **Payments**: Record payments related to rental agreements.
+- [ ] **PaymentTypes**: Define types of payments.
 
 ### Maintenance Management
-- [x] **MaintenanceTasks**: Track maintenance tasks, costs, and statuses.
-- [x] **MaintenanceStatuses**: Define statuses for maintenance tasks.
+- [ ] **MaintenanceTasks**: Track maintenance tasks, costs, and statuses.
+- [ ] **MaintenanceStatuses**: Define statuses for maintenance tasks.
 
 ### Document Management
-- [x] **Documents**: Store documents related to properties and rental agreements.
-- [x] **DocumentTypes**: Define types of documents.
+- [ ] **Documents**: Store documents related to properties and rental agreements.
+- [ ] **DocumentTypes**: Define types of documents.
 
 ### Notifications
-- [x] **Notifications**: Send notifications to users regarding various events.
+- [ ] **Notifications**: Send notifications to users regarding various events.
