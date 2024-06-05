@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'includes/db.php';
+require($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/db.php'); 
 
 $token = $_POST['token'];
 $newPassword = password_hash($_POST['new_password'], PASSWORD_BCRYPT);

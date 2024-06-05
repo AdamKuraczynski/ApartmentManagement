@@ -1,7 +1,7 @@
 <?php
 session_start();
-require 'includes/db.php';
-require 'includes/mail.php';
+require($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/db.php'); 
+require($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/mail.php'); 
 
 $email = $_POST['email'];
 $stmt = $conn->prepare("SELECT user_id FROM Users WHERE email = ?");
@@ -19,7 +19,7 @@ if ($result->num_rows == 1) {
     $stmt->bind_param("iss", $userId, $token, $createdAt);
     $stmt->execute();
 
-    $resetLink = "http://localhost/ApartmentManagement/reset_password.php?token=" . $token;
+    $resetLink = "http://localhost/ApartmentManagement/password/reset_password.php?token=" . $token;
     
     if (sendResetEmail($email, $resetLink)) {
         $_SESSION['message'] = "A password reset link has been sent to your email.";
