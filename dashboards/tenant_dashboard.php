@@ -20,8 +20,7 @@ if (!isset($_SESSION['user_id']) || !check_user_role($conn, $_SESSION['user_id']
     <?php include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/header.php'); ?>
 
     <main>
-        <h5>Welcome, <?php echo $_SESSION['username']; ?>!</h5>
-        <p>Here you can manage your rental agreements and view payment history.</p>
+        <p>This is your dashboard</p>
 
         
     </main>

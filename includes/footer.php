@@ -9,30 +9,30 @@
 <body>
     <div class="wrapper">
         <footer class="footer">
-            <nav>
-                <a href="/apartmentmanagement/index.php">Home</a>
-                <?php 
-                require_once($_SERVER['DOCUMENT_ROOT'] . '/apartmentmanagement/includes/db.php');
-                require_once($_SERVER['DOCUMENT_ROOT'] . '/apartmentmanagement/includes/functions.php');
+        <nav>
+            <?php 
+            require_once($_SERVER['DOCUMENT_ROOT'] . '/apartmentmanagement/includes/db.php');
+            require_once($_SERVER['DOCUMENT_ROOT'] . '/apartmentmanagement/includes/functions.php');
 
-                if (isset($_SESSION['user_id'])) {
-                    $user_id = $_SESSION['user_id'];
-                    if (check_user_role($conn, $user_id, 'administrator')): ?>
-                        <a href="/apartmentmanagement/dashboards/administrator_dashboard.php">Admin Dashboard</a>
-                    <?php endif; 
-                    if (check_user_role($conn, $user_id, 'owner')): ?>
-                        <a href="/apartmentmanagement/dashboards/owner_dashboard.php">Owner Dashboard</a>
-                    <?php endif; 
-                    if (check_user_role($conn, $user_id, 'tenant')): ?>
-                        <a href="/apartmentmanagement/dashboards/tenant_dashboard.php">Tenant Dashboard</a>
-                    <?php endif;
-                } else {
-                    echo '<a href="/apartmentmanagement/login.php">Login</a>';
-                }
-                ?>
-
-                <a href="/apartmentmanagement/logout.php">Logout</a>
-            </nav>
+            if (isset($_SESSION['user_id'])) {
+                $user_id = $_SESSION['user_id'];
+                if (check_user_role($conn, $user_id, 'administrator')): ?>
+                    <a href="/apartmentmanagement/index.php">Home</a>
+                    <a href="/apartmentmanagement/dashboards/administrator_dashboard.php">Admin Dashboard</a>
+                <?php endif; 
+                if (check_user_role($conn, $user_id, 'owner')): ?>
+                    <a href="/apartmentmanagement/index.php">Home</a>
+                    <a href="/apartmentmanagement/dashboards/owner_dashboard.php">Owner Dashboard</a>
+                <?php endif; 
+                if (check_user_role($conn, $user_id, 'tenant')): ?>
+                    <a href="/apartmentmanagement/index.php">Home</a>
+                    <a href="/apartmentmanagement/dashboards/tenant_dashboard.php">Tenant Dashboard</a>
+                <?php endif;
+            } else {
+                echo 'Apartment Management System';
+            }
+            ?>
+        </nav>
         </footer>
     </div>
 </body>

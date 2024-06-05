@@ -33,19 +33,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($user_id) {
         if (check_user_role($conn, $user_id, 'administrator')) {
             $_SESSION['role'] = 'administrator';
-            header("Location: /apartmentmanagement/dashboards/administrator_dashboard.php");
+            header("Location: /apartmentmanagement/index.php");
             exit();
         }
 
         if (check_user_role($conn, $user_id, 'owner')) {
             $_SESSION['role'] = 'owner';
-            header("Location: /apartmentmanagement/dashboards/owner_dashboard.php");
+            header("Location: /apartmentmanagement/index.php");
             exit();
         }
 
         if (check_user_role($conn, $user_id, 'tenant')) {
             $_SESSION['role'] = 'tenant';
-            header("Location: /apartmentmanagement/dashboards/tenant_dashboard.php");
+            header("Location: /apartmentmanagement/index.php");
             exit();
         }
 
