@@ -54,6 +54,10 @@ nav a:hover {
 main {
     padding: 20px;
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 h2 {
@@ -68,11 +72,15 @@ form {
     border: 1px solid #ccc;
     border-radius: 10px;
     max-width: 400px;
+    width: 100%;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-form input[type="text"], form input[type="password"], form input[type="date"], form input[type="email"] {
-    width: 100%;
+form input[type="text"], form input[type="password"], form input[type="date"], form input[type="email"], form select {
+    width: 90%;
     padding: 10px;
     margin: 10px 0;
     border: 1px solid #ccc;
@@ -87,6 +95,9 @@ form input[type="submit"] {
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
+    margin-top: 10px;
+    width: 100px;
+    text-align: center;
 }
 
 form input[type="submit"]:hover {
@@ -96,17 +107,6 @@ form input[type="submit"]:hover {
 form p {
     text-align: center;
 }
-
-form select {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background: #fff;
-    font-size: 16px;
-}
-
 
 .error-message {
     color: red;
@@ -272,4 +272,3 @@ nav ul li a:hover {
     padding: 10px;
     border-radius: 3px;
 }
-
