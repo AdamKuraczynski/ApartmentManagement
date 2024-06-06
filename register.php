@@ -10,7 +10,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $last_name = sanitize_input($_POST["last_name"]);
     $phone_number = sanitize_input($_POST["phone_number"]);
     $address = sanitize_input($_POST["address"]);
-    $role = sanitize_input($_POST["role"]);
 
     $conn->begin_transaction();
 

@@ -165,4 +165,4 @@ ALTER TABLE `Documents` ADD FOREIGN KEY (`document_type_id`) REFERENCES `Documen
 
 ALTER TABLE `Notifications` ADD FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`);
 
-ALTER TABLE 'UserDetails' ADD FOREIGN KEY ('user_id') REFERENCES 'Users' ('user_id');
+ALTER TABLE `UserDetails` ADD FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`);
