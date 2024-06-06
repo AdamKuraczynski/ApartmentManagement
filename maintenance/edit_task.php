@@ -47,6 +47,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <input type="text" name="status_id" placeholder="Status ID" required>
             <button type="submit">Edit Task</button>
         </form>
+        <?php 
+            $back_link = '/apartmentmanagement/index.php';
+            if ($is_admin) {
+                $back_link = '/apartmentmanagement/dashboards/administrator_dashboard.php';
+            } elseif ($is_tenant) {
+                $back_link = '/apartmentmanagement/dashboards/tenant_dashboard.php';
+            } elseif ($is_owner) {
+                $back_link = '/apartmentmanagement/dashboards/owner_dashboard.php';
+            }
+        ?>
+        <a class="back-button" href="<?php echo $back_link; ?>">Go back</a>
     </main>
     <?php include('../includes/footer.php'); ?>
 </body>

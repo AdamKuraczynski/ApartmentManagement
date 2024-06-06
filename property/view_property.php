@@ -25,7 +25,19 @@ $property = $result->fetch_assoc();
     <main>
         <h2>View Property</h2>
         <p>Property Name: <?php echo $property['property_name']; ?></p>
-        <!-- Add other property details here -->
+     
+        
+        <?php 
+            $back_link = '/apartmentmanagement/index.php';
+            if ($is_admin) {
+                $back_link = '/apartmentmanagement/dashboards/administrator_dashboard.php';
+            } elseif ($is_tenant) {
+                $back_link = '/apartmentmanagement/dashboards/tenant_dashboard.php';
+            } elseif ($is_owner) {
+                $back_link = '/apartmentmanagement/dashboards/owner_dashboard.php';
+            }
+        ?>
+        <a class="back-button" href="<?php echo $back_link; ?>">Go back</a>        
     </main>
     <?php include('../includes/footer.php'); ?>
 </body>

@@ -25,4 +25,16 @@ function check_user_role($conn, $user_id, $role) {
     }
     return false;
 }
+
+if (isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
+    $is_admin = check_user_role($conn, $user_id, 'administrator');
+    $is_tenant = check_user_role($conn, $user_id, 'tenant');
+    $is_owner = check_user_role($conn, $user_id, 'owner');
+} else {
+    $user_id = null;
+    $is_admin = false;
+    $is_tenant = false;
+    $is_owner = false;
+}
 ?>

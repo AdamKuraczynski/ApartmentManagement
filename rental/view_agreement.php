@@ -11,11 +11,6 @@ if (!isset($_SESSION['user_id']) ||
     exit();
 }
 
-$user_id = $_SESSION['user_id'];
-$is_admin = check_user_role($conn, $user_id, 'administrator');
-$is_tenant = check_user_role($conn, $user_id, 'tenant');
-$is_owner = check_user_role($conn, $user_id, 'owner');
-
 // Prepare the SQL query based on the user's role
 if ($is_admin) {
     $stmt = $conn->prepare("
@@ -80,6 +75,17 @@ $result = $stmt->get_result();
                 <?php endif; ?>
             </tbody>
         </table>
+        <?php 
+            $back_link = '/apartmentmanagement/index.php';
+            if ($is_admin) {
+                $back_link = '/apartmentmanagement/dashboards/administrator_dashboard.php';
+            } elseif ($is_tenant) {
+                $back_link = '/apartmentmanagement/dashboards/tenant_dashboard.php';
+            } elseif ($is_owner) {
+                $back_link = '/apartmentmanagement/dashboards/owner_dashboard.php';
+            }
+        ?>
+        <a class="back-button" href="<?php echo $back_link; ?>">Go back</a>
     </main>
     <?php include('../includes/footer.php'); ?>
 </body>

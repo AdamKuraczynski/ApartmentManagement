@@ -43,7 +43,17 @@ $task = $result->fetch_assoc();
             <?php else: ?>
                 <p colspan="7">You don't have any maintenance tasks at the moment.</p>
             <?php endif; ?>
-            <!-- Add other task details here -->
+            <?php 
+            $back_link = '/apartmentmanagement/index.php';
+            if ($is_admin) {
+                $back_link = '/apartmentmanagement/dashboards/administrator_dashboard.php';
+            } elseif ($is_tenant) {
+                $back_link = '/apartmentmanagement/dashboards/tenant_dashboard.php';
+            } elseif ($is_owner) {
+                $back_link = '/apartmentmanagement/dashboards/owner_dashboard.php';
+            }
+        ?>
+        <a class="back-button" href="<?php echo $back_link; ?>">Go back</a>
     </main>
     <?php include('../includes/footer.php'); ?>
 </body>
