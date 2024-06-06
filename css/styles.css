@@ -244,9 +244,11 @@ nav ul li a:hover {
 .admin_dashboard ul {
     display: flex;
     min-width: 200px;
+    height: 80px;
 }
 
 .admin_dashboard li {
     display: block;
     width: 150px;
 }
+
