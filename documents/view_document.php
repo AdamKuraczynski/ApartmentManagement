@@ -4,12 +4,9 @@ include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/db.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/functions.php'); 
 
 // Fetch document details
-$stmt = $conn->prepare("SELECT * FROM Documents WHERE document_id = ?");
-$stmt->bind_param("i", $_GET['document_id']);
+$stmt = $conn->prepare("SELECT * FROM documents JOIN documenttypes ON documents.document_type_id = documenttypes.document_type_id;");
 $stmt->execute();
 $result = $stmt->get_result();
-$document = $result->fetch_assoc();
-
 ?>
 
 <!DOCTYPE html>
@@ -17,18 +14,38 @@ $document = $result->fetch_assoc();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Document</title>
-    <link rel="stylesheet" type="text/css" href="/apartmentmanagement/css/styles.css">
+    <title>View Documents</title>
+    <link rel="stylesheet" type="text/css" href="/Apartmentmanagement/css/styles.css">
 </head>
 <body>
-    <?php include('../includes/header.php'); ?>
+<?php include('../includes/header.php'); ?>
     <main>
-        <h2>View Document</h2>
-        <p>Property ID: <?php echo $document['property_id']; ?></p>
-        <p>Agreement ID: <?php echo $document['agreement_id']; ?></p>
-        <p>Document Type ID: <?php echo $document['document_type_id']; ?></p>
-        <p>Uploaded At: <?php echo $document['uploaded_at']; ?></p>
-        <p>File Path: <a href="<?php echo $document['file_path']; ?>"><?php echo basename($document['file_path']); ?></a></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>document_id</th>
+                    <th>property_id</th>
+                    <th>agreement_id</th>
+                    <th>document_type_id</th>
+                    <th>file_path</th>
+                    <th>uploaded_at</th>
+                    <th>document_type_name</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while ($row = $result->fetch_assoc()): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($row['document_id']); ?></td>
+                        <td><?php echo htmlspecialchars($row['property_id']); ?></td>
+                        <td><?php echo htmlspecialchars($row['agreement_id']); ?></td>
+                        <td><?php echo htmlspecialchars($row['document_type_id']); ?></td>
+                        <td><?php echo htmlspecialchars($row['file_path']); ?></td>
+                        <td><?php echo htmlspecialchars($row['uploaded_at']); ?></td>
+                        <td><?php echo htmlspecialchars($row['document_type_name']); ?></td>
+                    </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
     </main>
     <?php include('../includes/footer.php'); ?>
 </body>

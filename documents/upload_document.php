@@ -47,8 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <form action="upload_document.php" method="post" enctype="multipart/form-data">
             <input type="text" name="property_id" placeholder="Property ID" required>
             <input type="text" name="agreement_id" placeholder="Agreement ID" required>
-           ### `documents/upload_document.php` (continued)
-```php
             <input type="text" name="document_type_id" placeholder="Document Type ID" required>
             <input type="file" name="file" required>
             <button type="submit">Upload Document</button>

@@ -13,7 +13,7 @@ if (!isset($_SESSION['user_id']) || !check_user_role($conn, $_SESSION['user_id']
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Owner Dashboard</title>
-    <link rel="stylesheet" type="text/css" href="/apartmentmanagement/css/styles.css">
+    <link rel="stylesheet" type="text/css" href="/Apartmentmanagement/css/styles.css">
 </head>
 <body>
     <?php include('../includes/header.php'); ?>
