@@ -26,7 +26,7 @@ if (!isset($_SESSION['user_id']) || !check_user_role($conn, $_SESSION['user_id']
             <li><a href="../property/view_property.php">View Property</a></li>
             <li><a href="../rental/add_agreement.php">Add Rental Agreement</a></li>
             <li><a href="../rental/edit_agreement.php">Edit Rental Agreement</a></li>
-            <li><a href="../rental/view_agreement.php">View Rental Agreement</a></li>
+            <li><a href="../rental/view_agreement.php">View Rental Agreements</a></li>
             <li><a href="../maintenance/add_task.php">Add Maintenance Task</a></li>
             <li><a href="../maintenance/edit_task.php">Edit Maintenance Task</a></li>
             <li><a href="../maintenance/view_task.php">View Maintenance Task</a></li>
@@ -39,4 +39,3 @@ if (!isset($_SESSION['user_id']) || !check_user_role($conn, $_SESSION['user_id']
     <?php include('../includes/footer.php'); ?>
 </body>
 </html>
-
