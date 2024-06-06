@@ -237,8 +237,9 @@ nav ul li a:hover {
 }
 
 .admin_dashboard {
+    margin-left: 50px;
     display: block;
-    width: 1000px;
+    width: 80%;
 }
 
 .admin_dashboard ul {
@@ -250,5 +251,14 @@ nav ul li a:hover {
 .admin_dashboard li {
     display: block;
     width: 150px;
+}
+
+.admin_dashboard h3 {
+    color: #fff;
+    text-align: center;
+    width: 100%;
+    background-color: #666;
+    padding: 10px;
+    border-radius: 3px;
 }
 
