@@ -1,19 +1,28 @@
-<?php
+<?php 
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/auth.php'); 
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/db.php'); 
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/functions.php'); 
 
+if (!isset($_SESSION['user_id']) || 
+    !(check_user_role($conn, $_SESSION['user_id'], 'administrator') || 
+      check_user_role($conn, $_SESSION['user_id'], 'owner') ||
+      check_user_role($conn, $_SESSION['user_id'], 'tenant'))) {
+    header("Location: /apartmentmanagement/index.php");
+    exit();
+}
+
 $user_id = $_SESSION['user_id'];
 $is_admin = check_user_role($conn, $user_id, 'administrator');
+$is_tenant = check_user_role($conn, $user_id, 'tenant');
+$is_owner = check_user_role($conn, $user_id, 'owner');
 
+// Prepare the SQL query based on the user's role
 if ($is_admin) {
-    // Fetch all rental agreements for administrators
     $stmt = $conn->prepare("
         SELECT ra.agreement_id, ra.property_id, ra.tenant_id, ra.start_date, ra.end_date, ra.rent_amount, ra.security_deposit 
         FROM RentalAgreements ra
     ");
 } else {
-    // Fetch rental agreements for the logged-in tenant or owner
     $stmt = $conn->prepare("
         SELECT ra.agreement_id, ra.property_id, ra.tenant_id, ra.start_date, ra.end_date, ra.rent_amount, ra.security_deposit 
         FROM RentalAgreements ra 
@@ -40,19 +49,19 @@ $result = $stmt->get_result();
     <main>
         <h2>View Rental Agreements</h2>
         <table>
-            <thead>
-                <tr>
-                    <th>Agreement ID</th>
-                    <th>Property ID</th>
-                    <th>Tenant ID</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Rent Amount</th>
-                    <th>Security Deposit</th>
-                </tr>
-            </thead>
             <tbody>
                 <?php if ($result->num_rows > 0): ?>
+                    <thead>
+                        <tr>
+                            <th>Agreement ID</th>
+                            <th>Property ID</th>
+                            <th>Tenant ID</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Rent Amount</th>
+                            <th>Security Deposit</th>
+                        </tr>
+                    </thead>
                     <?php while ($row = $result->fetch_assoc()): ?>
                         <tr>
                             <td><?php echo $row['agreement_id']; ?></td>
