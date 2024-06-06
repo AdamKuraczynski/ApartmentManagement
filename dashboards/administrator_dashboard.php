@@ -34,6 +34,7 @@ if (!isset($_SESSION['user_id']) || !check_user_role($conn, $_SESSION['user_id']
             <li><a href="../documents/view_document.php">View Document</a></li>
             <li><a href="../notifications/view_notifications.php">View Notifications</a></li>
             <li><a href="../pdf/generate_pdf.php">Generate Report</a></li>
+            <li><a href="../roles/modify_roles.php">Modify Roles</a></li>
         </ul>
     </main>
     <?php include('../includes/footer.php'); ?>
