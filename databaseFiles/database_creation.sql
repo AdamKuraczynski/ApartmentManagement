@@ -120,6 +120,15 @@ CREATE TABLE `Notifications` (
   `read_at` datetime
 );
 
+CREATE TABLE `UserDetails` (
+  `detail_id` int PRIMARY KEY AUTO_INCREMENT,
+  `user_id` int,
+  `first_name` varchar(50) NOT NULL,
+  `last_name` varchar(50) NOT NULL,
+  `phone_number` varchar(12),
+  `address` text
+);
+
 ALTER TABLE `PasswordResets` ADD FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`);
 
 ALTER TABLE `Administrators` ADD FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`);
@@ -155,3 +164,5 @@ ALTER TABLE `Documents` ADD FOREIGN KEY (`agreement_id`) REFERENCES `RentalAgree
 ALTER TABLE `Documents` ADD FOREIGN KEY (`document_type_id`) REFERENCES `DocumentTypes` (`document_type_id`);
 
 ALTER TABLE `Notifications` ADD FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`);
+
+ALTER TABLE 'UserDetails' ADD FOREIGN KEY ('user_id') REFERENCES 'Users' ('user_id');

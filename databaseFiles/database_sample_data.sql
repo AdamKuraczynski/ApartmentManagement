@@ -53,3 +53,7 @@ INSERT INTO Payments (agreement_id, payment_date, amount, payment_type_id) VALUE
 
 INSERT INTO Documents (property_id, agreement_id, document_type_id, file_path, uploaded_at) VALUES
 (1, 1, 1, '/documents/lease_agreement_1.pdf', '2023-01-01 12:00:00');
+
+INSERT INTO UserDetails (user_id, first_name, last_name, phone_number, address) VALUES 
+(2, 'Martin', 'Kowalski', +48700880749, 'Wrszawska 42A, 44-420 Tarnow'),
+(3, 'Calvin', 'Klein', +48509228332, 'Cicha 260C/4, 34-696 Warszawa');
