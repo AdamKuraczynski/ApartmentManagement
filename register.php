@@ -45,7 +45,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         Username: <input type="text" name="username" required><br>
         Email: <input type="email" name="email" required><br>
         Password: <input type="password" name="password" required><br>
-        I am a: <select required><option selected>Tenant</option><option>Owner</option></select><br>
         <input type="submit" value="Register">
     </form>
 
