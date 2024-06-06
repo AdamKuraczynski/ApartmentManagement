@@ -235,3 +235,18 @@ nav ul li a:hover {
 .back-button:hover {
     background-color: #555;
 }
+
+.admin_dashboard {
+    display: block;
+    width: 1000px;
+}
+
+.admin_dashboard ul {
+    display: flex;
+    min-width: 200px;
+}
+
+.admin_dashboard li {
+    display: block;
+    width: 150px;
+}
