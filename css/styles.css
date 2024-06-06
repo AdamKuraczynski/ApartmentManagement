@@ -245,7 +245,7 @@ nav ul li a:hover {
 .admin_dashboard ul {
     display: flex;
     min-width: 200px;
-    height: 80px;
+    height: wrap;
 }
 
 .admin_dashboard li {
@@ -255,7 +255,7 @@ nav ul li a:hover {
 
 .admin_dashboard h3 {
     color: #fff;
-    text-align: center;
+    text-align: left;
     width: 100%;
     background-color: #666;
     padding: 10px;
