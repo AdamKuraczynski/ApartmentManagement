@@ -6,12 +6,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = sanitize_input($_POST["username"]);
     $email = sanitize_input($_POST["email"]);
     $password = password_hash(sanitize_input($_POST["password"]), PASSWORD_BCRYPT);
+    $user_role = sanitize_input($_POST["user_role"]);
 
     $sql = "INSERT INTO Users (username, email, password_hash) VALUES ('$username', '$email', '$password')";
     if ($conn->query($sql) === TRUE) {
         $user_id = $conn->insert_id;
 
-        $sql = "INSERT INTO Tenants (user_id) VALUES ('$user_id')";
+        if ($user_role == "Tenant") {
+            $sql = "INSERT INTO Tenants (user_id) VALUES ('$user_id')";
+        } elseif ($user_role == "Owner") {
+            $sql = "INSERT INTO Owners (user_id) VALUES ('$user_id')";
+        }
+
         if ($conn->query($sql) === TRUE) {
             echo "Registration successful!";
             header("Location: /apartmentmanagement/login.php");
@@ -45,6 +51,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         Username: <input type="text" name="username" required><br>
         Email: <input type="email" name="email" required><br>
         Password: <input type="password" name="password" required><br>
+        I am a: 
+        <select name="user_role" required>
+            <option value="Tenant" selected>Tenant</option>
+            <option value="Owner">Owner</option>
+        </select><br>
         <input type="submit" value="Register">
     </form>
 
