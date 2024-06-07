@@ -20,6 +20,7 @@ $result = $stmt->get_result();
 <body>
 <?php include('../includes/header.php'); ?>
     <main>
+        <h2>View Documents</h2>
         <table>
         <?php if ($result->num_rows > 0): ?>
             <thead>

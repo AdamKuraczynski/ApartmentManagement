@@ -27,11 +27,13 @@ $stmt = $conn->prepare("
     SELECT p.property_id, p.owner_id, p.address_id, p.type_id, p.number_of_rooms, p.size, p.rental_price, p.description,
            a.street, a.city, a.state, a.postal_code, a.country,
            pt.type_name,
-           u.username AS owner_name
+           u.username AS owner_username, u.email AS owner_email,
+           ud.first_name AS owner_first_name, ud.last_name AS owner_last_name
     FROM Properties p
     JOIN Addresses a ON p.address_id = a.address_id
     JOIN PropertyTypes pt ON p.type_id = pt.type_id
     JOIN Users u ON p.owner_id = u.user_id
+    JOIN UserDetails ud ON u.user_id = ud.user_id
     WHERE p.property_id = ?
 ");
 
@@ -62,14 +64,13 @@ if (!$property) {
             <div class="property-section">
                 <h3>General Information</h3>
                 <p><strong>Property ID:</strong> <?php echo htmlspecialchars($property['property_id']); ?></p>
-                <p><strong>Owner:</strong> <?php echo htmlspecialchars($property['owner_name']); ?></p>
+                <p><strong>Owner:</strong> <?php echo htmlspecialchars($property['owner_username']); ?></p>
                 <p><strong>Type:</strong> <?php echo htmlspecialchars($property['type_name']); ?></p>
                 <p><strong>Number of Rooms:</strong> <?php echo htmlspecialchars($property['number_of_rooms']); ?></p>
                 <p><strong>Size:</strong> <?php echo htmlspecialchars($property['size']); ?> sqm</p>
                 <p><strong>Rental Price:</strong> $<?php echo htmlspecialchars($property['rental_price']); ?></p>
             </div>
             <div class="property-section">
-                <h3>Address</h3>
                 <p><?php echo htmlspecialchars($property['street']); ?></p>
                 <p><?php echo htmlspecialchars($property['city']); ?></p>
                 <p><?php echo htmlspecialchars($property['state']); ?></p>
@@ -79,6 +80,13 @@ if (!$property) {
             <div class="property-section">
                 <h3>Description</h3>
                 <p><?php echo nl2br(htmlspecialchars($property['description'])); ?></p>
+            </div>
+            <div class="property-section">
+                <h3>Owner Information</h3>
+                <p><strong>Username:</strong> <?php echo htmlspecialchars($property['owner_username']); ?></p>
+                <p><strong>First Name:</strong> <?php echo htmlspecialchars($property['owner_first_name']); ?></p>
+                <p><strong>Last Name:</strong> <?php echo htmlspecialchars($property['owner_last_name']); ?></p>
+                <p><strong>Email:</strong> <?php echo htmlspecialchars($property['owner_email']); ?></p>
             </div>
         </div>
         <?php 
