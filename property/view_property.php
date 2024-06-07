@@ -15,11 +15,35 @@ if (!isset($_SESSION['user_id']) ||
 // Prepare the SQL query based on the user's role
 if ($is_admin) {
     $stmt = $conn->prepare("
-        SELECT property_id, owner_id, address_id, type_id, number_of_rooms, size, rental_price, description FROM Properties
+       SELECT p.property_id, p.owner_id, p.address_id, p.type_id, p.number_of_rooms, p.size, p.rental_price, p.description,
+               a.street, a.city, a.state, a.postal_code, a.country,
+               pt.type_name
+        FROM Properties p
+        JOIN Addresses a ON p.address_id = a.address_id
+        JOIN PropertyTypes pt ON p.type_id = pt.type_id
     ");
 } else if ($is_owner) {
     $stmt = $conn->prepare("
-        SELECT pr.property_id, pr.owner_id, pr.address_id, pr.type_id, pr.number_of_rooms, pr.size, pr.rental_price, pr.description FROM Properties pr WHERE owner_id = ?
+        SELECT p.property_id, p.owner_id, p.address_id, p.type_id, p.number_of_rooms, p.size, p.rental_price, p.description,
+               a.street, a.city, a.state, a.postal_code, a.country,
+               pt.type_name
+        FROM Properties p
+        JOIN Addresses a ON p.address_id = a.address_id
+        JOIN PropertyTypes pt ON p.type_id = pt.type_id
+        WHERE p.owner_id = ?
+    ");
+    $stmt->bind_param("i", $user_id);
+}  else if ($is_tenant) {
+    $stmt = $conn->prepare("
+        SELECT p.property_id, p.owner_id, p.address_id, p.type_id, p.number_of_rooms, p.size, p.rental_price, p.description,
+               a.street, a.city, a.state, a.postal_code, a.country,
+               pt.type_name
+        FROM Properties p
+        JOIN Addresses a ON p.address_id = a.address_id
+        JOIN PropertyTypes pt ON p.type_id = pt.type_id
+        JOIN RentalAgreements ra ON p.property_id = ra.property_id
+        JOIN Tenants t ON ra.tenant_id = t.tenant_id
+        WHERE t.user_id = ?
     ");
     $stmt->bind_param("i", $user_id);
 }
@@ -39,21 +63,35 @@ $result = $stmt->get_result();
 <body>
     <?php include('../includes/header.php'); ?>
     <main>
-        <h2>View Property</h2>
-        <p>Property Name: <?php echo $property['property_name']; ?></p>
-     
-        
-        <?php 
-            $back_link = '/apartmentmanagement/index.php';
-            if ($is_admin) {
-                $back_link = '/apartmentmanagement/dashboards/administrator_dashboard.php';
-            } elseif ($is_tenant) {
-                $back_link = '/apartmentmanagement/dashboards/tenant_dashboard.php';
-            } elseif ($is_owner) {
-                $back_link = '/apartmentmanagement/dashboards/owner_dashboard.php';
-            }
-        ?>
-        <a class="back-button" href="<?php echo $back_link; ?>">Go back</a>        
+        <h2>View Properties</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Property ID</th>
+                    <th>Owner ID</th>
+                    <th>Address</th>
+                    <th>Type</th>
+                    <th>Number of Rooms</th>
+                    <th>Size</th>
+                    <th>Rental Price</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while ($row = $result->fetch_assoc()): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($row['property_id']); ?></td>
+                    <td><?php echo htmlspecialchars($row['owner_id']); ?></td>
+                    <td><?php echo htmlspecialchars($row['street'] . ', ' . $row['city'] . ', ' . $row['state'] . ', ' . $row['postal_code'] . ', ' . $row['country']); ?></td>
+                    <td><?php echo htmlspecialchars($row['type_name']); ?></td>
+                    <td><?php echo htmlspecialchars($row['number_of_rooms']); ?></td>
+                    <td><?php echo htmlspecialchars($row['size']); ?></td>
+                    <td><?php echo htmlspecialchars($row['rental_price']); ?></td>
+                    <td><?php echo htmlspecialchars($row['description']); ?></td>
+                </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
     </main>
     <?php include('../includes/footer.php'); ?>
 </body>
