@@ -10,28 +10,12 @@
 
 ## To do:
 
-### Role Management
-- [ ] **Administrators**: Manage properties, tenants, and overall system.
-- [ ] **Owners**: Manage their properties and tenant interactions.
-- [ ] **Tenants**: Manage rental agreements and contact details.
-
-### Property Management
-- [ ] **Addresses**: Store property address details.
-- [ ] **Properties**: Track property information, including owner, type, and rental details.
-- [ ] **PropertyTypes**: Define types of properties.
-
-### Rental Management
-- [ ] **RentalAgreements**: Manage rental agreements, including start/end dates and payment terms.
-- [ ] **Payments**: Record payments related to rental agreements.
-- [ ] **PaymentTypes**: Define types of payments.
-
-### Maintenance Management
-- [ ] **MaintenanceTasks**: Track maintenance tasks, costs, and statuses.
-- [ ] **MaintenanceStatuses**: Define statuses for maintenance tasks.
-
-### Document Management
-- [ ] **Documents**: Store documents related to properties and rental agreements.
-- [ ] **DocumentTypes**: Define types of documents.
-
-### Notifications
-- [ ] **Notifications**: Send notifications to users regarding various events.
+- notifications
+- fix all panels that from admin dashboard
+  - maintenance
+  - rental agreements
+  - payments - NEEDS TO BE ADDED
+  - properties + addresses
+- define types of properties, payments, documents, maintenance task statuses
+- documents storing and access
+- add panel that allows users modify their details
