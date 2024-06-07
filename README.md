@@ -11,7 +11,7 @@
 ## To do:
 
 - notifications
-- fix all panels that from admin dashboard
+- fix all panels from admin dashboard
   - maintenance
   - rental agreements
   - payments - NEEDS TO BE ADDED
