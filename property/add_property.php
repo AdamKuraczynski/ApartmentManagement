@@ -82,6 +82,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             Description: <textarea name="description" required></textarea><br>
             <input type="submit" value="Add Property">
         </form>
+        <?php 
+            $back_link = '/apartmentmanagement/index.php';
+            if ($is_admin) {
+                $back_link = '/apartmentmanagement/dashboards/administrator_dashboard.php';
+            } elseif ($is_tenant) {
+                $back_link = '/apartmentmanagement/dashboards/tenant_dashboard.php';
+            } elseif ($is_owner) {
+                $back_link = '/apartmentmanagement/dashboards/owner_dashboard.php';
+            }
+        ?>
+        <a class="back-button" href="<?php echo $back_link; ?>">Go back</a>
     </main>
 
     <?php include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/footer.php'); ?>
