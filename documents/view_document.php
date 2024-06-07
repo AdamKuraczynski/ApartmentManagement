@@ -21,6 +21,7 @@ $result = $stmt->get_result();
 <?php include('../includes/header.php'); ?>
     <main>
         <table>
+        <?php if ($result->num_rows > 0): ?>
             <thead>
                 <tr>
                     <th>document_id</th>
@@ -45,6 +46,11 @@ $result = $stmt->get_result();
                     </tr>
                 <?php endwhile; ?>
             </tbody>
+            <?php else: ?>
+                    <tr>
+                        <td colspan="7">You don't have documents at the moment.</td>
+                    </tr>
+                <?php endif; ?>
         </table>
         <?php 
             $back_link = '/apartmentmanagement/index.php';
