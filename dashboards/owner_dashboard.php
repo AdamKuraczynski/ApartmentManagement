@@ -29,6 +29,7 @@ if (!isset($_SESSION['user_id']) || !check_user_role($conn, $_SESSION['user_id']
             <li><a href="../documents/upload_document.php">Upload Document</a></li>
             <li><a href="../documents/view_document.php">View Document</a></li>
             <li><a href="../notifications/view_notifications.php">View Notifications</a></li>
+            <li><a href="../maintenance/view_task.php">View Maintenance Tasks</a></li>
         </ul>
     </main>
     <?php include('../includes/footer.php'); ?>

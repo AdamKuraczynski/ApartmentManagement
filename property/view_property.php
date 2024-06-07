@@ -11,6 +11,10 @@ if (!isset($_SESSION['user_id']) ||
     exit();
 }
 
+$user_id = $_SESSION['user_id'];
+$is_admin = check_user_role($conn, $user_id, 'administrator');
+$is_owner = check_user_role($conn, $user_id, 'owner');
+$is_tenant = check_user_role($conn, $user_id, 'tenant');
 
 // Prepare the SQL query based on the user's role
 if ($is_admin) {
@@ -33,7 +37,7 @@ if ($is_admin) {
         WHERE p.owner_id = ?
     ");
     $stmt->bind_param("i", $user_id);
-}  else if ($is_tenant) {
+} else if ($is_tenant) {
     $stmt = $conn->prepare("
         SELECT p.property_id, p.owner_id, p.address_id, p.type_id, p.number_of_rooms, p.size, p.rental_price, p.description,
                a.street, a.city, a.state, a.postal_code, a.country,
@@ -57,8 +61,8 @@ $result = $stmt->get_result();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Property</title>
-    <link rel="stylesheet" type="text/css" href="/Apartmentmanagement/css/styles.css">
+    <title>View Properties</title>
+    <link rel="stylesheet" type="text/css" href="/apartmentmanagement/css/styles.css">
 </head>
 <body>
     <?php include('../includes/header.php'); ?>
@@ -76,6 +80,7 @@ $result = $stmt->get_result();
                     <th>Size</th>
                     <th>Rental Price</th>
                     <th>Description</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -89,12 +94,15 @@ $result = $stmt->get_result();
                     <td><?php echo htmlspecialchars($row['size']); ?></td>
                     <td><?php echo htmlspecialchars($row['rental_price']); ?></td>
                     <td><?php echo htmlspecialchars($row['description']); ?></td>
+                    <td>
+                        <a href="/apartmentmanagement/property/property_details.php?property_id=<?php echo htmlspecialchars($row['property_id']); ?>">Details</a>
+                    </td>
                 </tr>
                 <?php endwhile; ?>
         <?php else: ?>
             <tr>
-                <td colspan="7">
-                    <?php if ($is_owner): ?> You don't have any properties.<?php else: ?> Nothing to show yet <?php endif; ?>
+                <td colspan="9">
+                    <?php if ($is_owner): ?> You don't have any properties.<?php else: ?> Nothing to show yet.<?php endif; ?>
                 </td>
             </tr>
         <?php endif; ?>
