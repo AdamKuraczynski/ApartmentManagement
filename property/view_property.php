@@ -65,6 +65,7 @@ $result = $stmt->get_result();
     <main>
         <h2>View Properties</h2>
         <table>
+        <?php if ($result->num_rows > 0): ?>
             <thead>
                 <tr>
                     <th>Property ID</th>
@@ -90,6 +91,13 @@ $result = $stmt->get_result();
                     <td><?php echo htmlspecialchars($row['description']); ?></td>
                 </tr>
                 <?php endwhile; ?>
+        <?php else: ?>
+            <tr>
+                <td colspan="7">
+                    <?php if ($is_owner): ?> You don't have any properties.<?php else: ?> Nothing to show yet <?php endif; ?>
+                </td>
+            </tr>
+        <?php endif; ?>
             </tbody>
         </table>
     </main>
