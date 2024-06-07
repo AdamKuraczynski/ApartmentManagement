@@ -3,13 +3,29 @@ include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/auth.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/db.php'); 
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/functions.php'); 
 
-// Fetch properties
-$stmt = $conn->prepare("SELECT * FROM Properties WHERE property_id = ?");
-$stmt->bind_param("i", $_GET['property_id']);
+if (!isset($_SESSION['user_id']) || 
+    !(check_user_role($conn, $_SESSION['user_id'], 'administrator') || 
+      check_user_role($conn, $_SESSION['user_id'], 'owner') ||
+      check_user_role($conn, $_SESSION['user_id'], 'tenant'))) {
+    header("Location: /apartmentmanagement/index.php");
+    exit();
+}
+
+
+// Prepare the SQL query based on the user's role
+if ($is_admin) {
+    $stmt = $conn->prepare("
+        SELECT property_id, owner_id, address_id, type_id, number_of_rooms, size, rental_price, description FROM Properties
+    ");
+} else if ($is_owner) {
+    $stmt = $conn->prepare("
+        SELECT pr.property_id, pr.owner_id, pr.address_id, pr.type_id, pr.number_of_rooms, pr.size, pr.rental_price, pr.description FROM Properties pr WHERE owner_id = ?
+    ");
+    $stmt->bind_param("i", $user_id);
+}
+
 $stmt->execute();
 $result = $stmt->get_result();
-$property = $result->fetch_assoc();
-
 ?>
 
 <!DOCTYPE html>
