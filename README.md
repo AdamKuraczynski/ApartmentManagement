@@ -15,3 +15,9 @@
 
 - define types of properties, payments, documents, maintenance task statuses
 - add panel that allows users modify their details
+
+- add some stuff to index.php as it it barren
+
+- verify functionality of all functions for all users
+
+- test adding, viewing, editing using all kinds of data and implement correct error handling if needed
