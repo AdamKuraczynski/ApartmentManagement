@@ -10,6 +10,8 @@ if (!isset($_SESSION['user_id']) ||
     exit();
 }
 
+$message = '';
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Handle file upload
     $property_id = $_POST['property_id'];
@@ -24,12 +26,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bind_param("iiiss", $property_id, $agreement_id, $document_type_id, $file_path, $uploaded_at);
         $stmt->execute();
         
-        echo "Document uploaded successfully.";
+        $message = "Document uploaded successfully.";
     } else {
-        echo "Failed to upload document.";
+        $message = "Failed to upload document.";
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -51,6 +52,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <input type="file" name="file" required>
             <button type="submit">Upload Document</button>
         </form>
+        <?php if ($message): ?>
+            <p><?= $message ?></p>
+        <?php endif; ?>
         <?php 
             $back_link = '/apartmentmanagement/index.php';
             if ($is_admin) {

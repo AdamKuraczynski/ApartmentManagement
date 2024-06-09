@@ -53,7 +53,7 @@ $result = $conn->query($query);
                     <td><?= $payment['amount'] ?></td>
                     <td><?= $payment['payment_type_id'] ?></td>
                     <td>
-                        <a href="view_payment.php?id=<?= $payment['payment_id'] ?>">View</a>
+                        <a href="payment_details.php?id=<?= $payment['payment_id'] ?>">Details</a>
                         <?php if ($is_admin || $is_owner): ?>
                             <a href="edit_payment.php?id=<?= $payment['payment_id'] ?>">Edit</a>
                         <?php endif; ?>
@@ -62,9 +62,6 @@ $result = $conn->query($query);
             <?php endwhile; ?>
         </tbody>
     </table>
-    <?php if ($is_admin || $is_owner): ?>
-        <a href="add_payment.php">Add Payment</a>
-    <?php endif; ?>
     <?php 
             $back_link = '/apartmentmanagement/index.php';
             if ($is_admin) {
