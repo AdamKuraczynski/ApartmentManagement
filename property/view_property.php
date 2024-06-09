@@ -96,6 +96,9 @@ $result = $stmt->get_result();
                     <td><?php echo htmlspecialchars($row['description']); ?></td>
                     <td>
                         <a href="/apartmentmanagement/property/property_details.php?property_id=<?php echo htmlspecialchars($row['property_id']); ?>">Details</a>
+                        <?php if ($is_admin || $is_owner): ?>
+                            <a href="edit_property.php?id=<?= $row['property_id'] ?>">Edit</a>
+                        <?php endif; ?>
                     </td>
                 </tr>
                 <?php endwhile; ?>

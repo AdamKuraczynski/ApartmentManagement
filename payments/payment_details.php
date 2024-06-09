@@ -33,13 +33,16 @@ if (!$payment || ($is_owner && !is_owner_of_property($conn, $user_id, $payment['
 <body>
 <?php include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/header.php'); ?>
 <main>
+<div class="property-detail">
+<div class="property-section">
     <h1>Payment Details</h1>
-    <p>ID: <?= $payment['payment_id'] ?></p>
-    <p>Agreement ID: <?= $payment['agreement_id'] ?></p>
-    <p>Date: <?= $payment['payment_date'] ?></p>
-    <p>Amount: <?= $payment['amount'] ?></p>
-    <p>Payment Type: <?= $payment['payment_type_id'] ?></p>
-
+    <p><strong>ID: </strong><?= $payment['payment_id'] ?></p>
+    <p><strong>Agreement ID: </strong><?= $payment['agreement_id'] ?></p>
+    <p><strong>Date: </strong><?= $payment['payment_date'] ?></p>
+    <p><strong>Amount: </strong><?= $payment['amount'] ?></p>
+    <p><strong>Payment Type: </strong><?= $payment['payment_type_id'] ?></p>
+</div>
+</div>
 
     <?php 
             $back_link = '/apartmentmanagement/index.php';
