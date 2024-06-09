@@ -3,16 +3,14 @@ include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/auth.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/db.php'); 
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/functions.php'); 
 
-// Sprawdzanie, czy użytkownik jest zalogowany i ma odpowiednią rolę (administrator lub właściciel)
-if (!isset($_SESSION['user_id']) || 
-    !(check_user_role($conn, $_SESSION['user_id'], 'administrator') || 
-      check_user_role($conn, $_SESSION['user_id'], 'owner'))) {
+// Check if the user is logged in and has the correct role (administrator)
+if (!isset($_SESSION['user_id']) || !check_user_role($conn, $_SESSION['user_id'], 'administrator')) {
     header("Location: /apartmentmanagement/index.php");
     exit();
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $owner_id = $_SESSION['user_id']; // zakładamy, że właściciel dodaje nieruchomość
+    $owner_id = sanitize_input($_POST["owner_id"]);
     $street = sanitize_input($_POST["street"]);
     $city = sanitize_input($_POST["city"]);
     $state = sanitize_input($_POST["state"]);
@@ -24,13 +22,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $rental_price = sanitize_input($_POST["rental_price"]);
     $description = sanitize_input($_POST["description"]);
 
-    // Wstawienie adresu do bazy danych
+    // Insert address into the database
     $stmt = $conn->prepare("INSERT INTO Addresses (street, city, state, postal_code, country) VALUES (?, ?, ?, ?, ?)");
     $stmt->bind_param("sssss", $street, $city, $state, $postal_code, $country);
     if ($stmt->execute()) {
         $address_id = $stmt->insert_id;
 
-        // Wstawienie nieruchomości do bazy danych
+        // Insert property into the database
         $stmt = $conn->prepare("INSERT INTO Properties (owner_id, address_id, type_id, number_of_rooms, size, rental_price, description) VALUES (?, ?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("iiiidss", $owner_id, $address_id, $type_id, $number_of_rooms, $size, $rental_price, $description);
         if ($stmt->execute()) {
@@ -45,7 +43,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     $stmt->close();
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -62,13 +59,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <main>
         <h2>Add Property</h2>
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-            Street: <input type="text" name="street" required><br>
-            City: <input type="text" name="city" required><br>
-            State: <input type="text" name="state" required><br>
-            Postal Code: <input type="text" name="postal_code" required><br>
-            Country: <input type="text" name="country" required><br>
-            Property Type: 
-            <select name="type_id" required>
+            <label for="owner_id">Owner:</label>
+            <select name="owner_id" id="owner_id" required>
+                <?php
+                $result = $conn->query("
+                    SELECT u.user_id, u.username 
+                    FROM Users u 
+                    JOIN Owners o ON u.user_id = o.user_id 
+                ");
+                while ($row = $result->fetch_assoc()) {
+                    echo '<option value="' . htmlspecialchars($row['user_id']) . '">' . htmlspecialchars($row['username']) . '</option>';
+                }
+                ?>
+            </select><br>
+            <label for="street">Street:</label> 
+            <input type="text" name="street" id="street" required><br>
+            <label for="city">City:</label> 
+            <input type="text" name="city" id="city" required><br>
+            <label for="state">State:</label> 
+            <input type="text" name="state" id="state" required><br>
+            <label for="postal_code">Postal Code:</label> 
+            <input type="text" name="postal_code" id="postal_code" required><br>
+            <label for="country">Country:</label> 
+            <input type="text" name="country" id="country" required><br>
+            <label for="type_id">Property Type:</label>
+            <select name="type_id" id="type_id" required>
                 <?php
                 $result = $conn->query("SELECT type_id, type_name FROM PropertyTypes");
                 while ($row = $result->fetch_assoc()) {
@@ -76,10 +91,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
                 ?>
             </select><br>
-            Number of Rooms: <input type="text" name="number_of_rooms" required><br>
-            Size (in sqm): <input type="text" name="size" required><br>
-            Rental Price: <input type="text" name="rental_price" required><br>
-            Description: <textarea name="description" required></textarea><br>
+            <label for="number_of_rooms">Number of Rooms:</label> 
+            <input type="text" name="number_of_rooms" id="number_of_rooms" required><br>
+            <label for="size">Size (in sqm):</label> 
+            <input type="text" name="size" id="size" required><br>
+            <label for="rental_price">Rental Price:</label> 
+            <input type="text" name="rental_price" id="rental_price" required><br>
+            <label for="description">Description:</label> 
+            <textarea name="description" id="description" required></textarea><br>
             <input type="submit" value="Add Property">
         </form>
         <?php 

@@ -71,15 +71,16 @@ if (!$property) {
                 <p><strong>Rental Price:</strong> $<?php echo htmlspecialchars($property['rental_price']); ?></p>
             </div>
             <div class="property-section">
-                <p><?php echo htmlspecialchars($property['street']); ?></p>
-                <p><?php echo htmlspecialchars($property['city']); ?></p>
-                <p><?php echo htmlspecialchars($property['state']); ?></p>
-                <p><?php echo htmlspecialchars($property['postal_code']); ?></p>
-                <p><?php echo htmlspecialchars($property['country']); ?></p>
+                <h3>Address</h3>
+                <p><strong>Street:</strong> <?php echo htmlspecialchars($property['street']); ?></p>
+                <p><strong>City:</strong> <?php echo htmlspecialchars($property['city']); ?></p>
+                <p><strong>State:</strong> <?php echo htmlspecialchars($property['state']); ?></p>
+                <p><strong>Postal Code:</strong> <?php echo htmlspecialchars($property['postal_code']); ?></p>
+                <p><strong>Country:</strong> <?php echo htmlspecialchars($property['country']); ?></p>
             </div>
             <div class="property-section">
                 <h3>Description</h3>
-                <p><?php echo nl2br(htmlspecialchars($property['description'])); ?></p>
+                <p><strong>Description:</strong> <?php echo nl2br(htmlspecialchars($property['description'])); ?></p>
             </div>
             <div class="property-section">
                 <h3>Owner Information</h3>
@@ -90,10 +91,18 @@ if (!$property) {
             </div>
         </div>
         <?php 
-            $back_link = '/apartmentmanagement/property/view_property.php';
+            $back_link = '/apartmentmanagement/index.php';
+            if ($is_admin) {
+                $back_link = '/apartmentmanagement/dashboards/administrator_dashboard.php';
+            } elseif ($is_tenant) {
+                $back_link = '/apartmentmanagement/dashboards/tenant_dashboard.php';
+            } elseif ($is_owner) {
+                $back_link = '/apartmentmanagement/dashboards/owner_dashboard.php';
+            }
         ?>
-        <a class="back-button" href="<?php echo $back_link; ?>">Go back</a>
+                <a class="back-button" href="<?php echo $back_link; ?>">Go back</a>
     </main>
     <?php include('../includes/footer.php'); ?>
 </body>
 </html>
+
