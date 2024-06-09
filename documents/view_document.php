@@ -18,6 +18,8 @@ $result = $stmt->get_result();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Documents</title>
     <link rel="stylesheet" type="text/css" href="/apartmentmanagement/css/styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/apartmentmanagement/js/scripts.js"></script>
 </head>
 <body>
 <?php include('../includes/header.php'); ?>
@@ -45,7 +47,7 @@ $result = $stmt->get_result();
                         <td><?php echo htmlspecialchars($row['document_type_id']); ?></td>
                         <td><?php echo htmlspecialchars($row['uploaded_at']); ?></td>
                         <td><?php echo htmlspecialchars($row['document_type_name']); ?></td>
-                        <td><a href="../uploads/<?php echo htmlspecialchars($row['file_path']); ?>" target="_blank">Open</a></td>
+                        <td><a href="#" onclick="handleFileClick(event, '../uploads/<?php echo htmlspecialchars($row['file_path']); ?>')">Open</a></td>
                     </tr>
                 <?php endwhile; ?>
             </tbody>

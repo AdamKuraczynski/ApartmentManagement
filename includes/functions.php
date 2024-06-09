@@ -37,4 +37,14 @@ if (isset($_SESSION['user_id'])) {
     $is_tenant = false;
     $is_owner = false;
 }
+
+function is_owner_of_property($conn, $user_id, $property_id) {
+    $stmt = $conn->prepare("SELECT 1 FROM Properties WHERE property_id = ? AND owner_id = ?");
+    $stmt->bind_param("ii", $property_id, $user_id);
+    $stmt->execute();
+    $stmt->store_result();
+    return $stmt->num_rows > 0;
+}
+
 ?>
+

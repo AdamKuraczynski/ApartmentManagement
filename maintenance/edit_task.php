@@ -4,7 +4,9 @@ include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/db.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/functions.php'); 
 
 // Check if user is logged in and has the appropriate role
-if (!isset($_SESSION['user_id']) || !(check_user_role($conn, $_SESSION['user_id'], 'administrator'))) {
+if (!isset($_SESSION['user_id']) || 
+    !(check_user_role($conn, $_SESSION['user_id'], 'administrator') || 
+      check_user_role($conn, $_SESSION['user_id'], 'owner'))) {
     header("Location: /apartmentmanagement/index.php");
     exit();
 }

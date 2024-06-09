@@ -149,8 +149,8 @@ if ($is_admin) {
     $stmt->close();
 }
 
-// Fetch notifications for the user
-$stmt = $conn->prepare("SELECT * FROM Notifications WHERE user_id = ?");
+// Fetch notifications for the user, ordered by created_at descending
+$stmt = $conn->prepare("SELECT * FROM Notifications WHERE user_id = ? ORDER BY created_at DESC");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -162,7 +162,7 @@ $result = $stmt->get_result();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Notifications</title>
-    <link rel="stylesheet" type="text/css" href="/Apartmentmanagement/css/styles.css">
+    <link rel="stylesheet" type="text/css" href="/apartmentmanagement/css/styles.css">
 </head>
 <body>
     <?php include('../includes/header.php'); ?>
