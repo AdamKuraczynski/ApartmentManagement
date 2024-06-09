@@ -21,7 +21,7 @@ if (!isset($_SESSION['user_id']) || !check_user_role($conn, $_SESSION['user_id']
     <main>
         <h2>Admin Dashboard</h2>
         <br/>
-        <div class = "admin_dashboard">
+        <div class = "dashboard">
         
             <h3> Manage all properties </h3>
             <ul>
@@ -67,7 +67,6 @@ if (!isset($_SESSION['user_id']) || !check_user_role($conn, $_SESSION['user_id']
                 <li><a href="../pdf/generate_pdf.php">Generate Report</a></li>
             </ul>
 
-       
             <h3> Manage users </h3>
             <ul>
                 <li><a href="../roles/modify_roles.php">Modify Roles</a></li>

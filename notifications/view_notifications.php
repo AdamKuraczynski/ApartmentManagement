@@ -3,11 +3,6 @@ include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/auth.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/db.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/functions.php');
 
-$user_id = $_SESSION['user_id'];
-$is_admin = check_user_role($conn, $user_id, 'administrator');
-$is_owner = check_user_role($conn, $user_id, 'owner');
-$is_tenant = check_user_role($conn, $user_id, 'tenant');
-
 if ($is_tenant) {
     // Get the tenant_id for the current user
     $stmt = $conn->prepare("SELECT tenant_id FROM Tenants WHERE user_id = ?");
