@@ -173,6 +173,25 @@ form p {
     text-decoration: underline;
 }
 
+/* Description textarea styling */
+form textarea {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: vertical; /* Allow vertical resizing only */
+    height: 100px; /* Set a fixed height */
+}
+
+/* General form input styling */
+form input[type="text"], 
+form input[type="date"], 
+form select, 
+form textarea {
+    box-sizing: border-box; /* Ensure padding and border are included in the element's width and height */
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
