@@ -3,62 +3,139 @@ include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/auth.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/db.php'); 
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/functions.php'); 
 
-if (!isset($_SESSION['user_id']) || 
-    !(check_user_role($conn, $_SESSION['user_id'], 'administrator'))) {
+// Check if user is logged in and has the appropriate role
+if (!isset($_SESSION['user_id']) || !(check_user_role($conn, $_SESSION['user_id'], 'administrator'))) {
     header("Location: /apartmentmanagement/index.php");
     exit();
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Handle form submission to edit maintenance task
-    $task_id = $_POST['task_id'];
-    $property_id = $_POST['property_id'];
-    $description = $_POST['description'];
-    $cost = $_POST['cost'];
-    $status_id = $_POST['status_id'];
-    
-    // SQL query to update maintenance task
-    $stmt = $conn->prepare("UPDATE MaintenanceTasks SET property_id = ?, description = ?, cost = ?, status_id = ? WHERE task_id = ?");
-    $stmt->bind_param("issii", $property_id, $description, $cost, $status_id, $task_id);
+$message = '';
+
+// Check if task ID is provided either via GET or POST
+$task_id = isset($_GET['task_id']) ? $_GET['task_id'] : (isset($_POST['task_id']) ? $_POST['task_id'] : null);
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $task_id) {
+    $property_id = sanitize_input($_POST['property_id']);
+    $description = sanitize_input($_POST['description']);
+    $cost = sanitize_input($_POST['cost']);
+    $status_id = sanitize_input($_POST['status_id']);
+
+    $update_query = "UPDATE MaintenanceTasks SET property_id = ?, description = ?, cost = ?, status_id = ? WHERE task_id = ?";
+    $stmt = $conn->prepare($update_query);
+    $stmt->bind_param("issdi", $property_id, $description, $cost, $status_id, $task_id);
+    if ($stmt->execute()) {
+        $message = "Successfully updated maintenance task.";
+
+        // Fetch updated task data
+        $query = "SELECT * FROM MaintenanceTasks WHERE task_id = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("i", $task_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $task = $result->fetch_assoc();
+    } else {
+        $message = "Error: " . $conn->error;
+    }
+} else if ($task_id) {
+    $query = "SELECT * FROM MaintenanceTasks WHERE task_id = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $task_id);
     $stmt->execute();
-    
-    echo "Maintenance task updated successfully.";
+    $result = $stmt->get_result();
+    $task = $result->fetch_assoc();
+
+    if (!$task) {
+        $task_id = null; // Reset task_id if not found
+    }
 }
 
+// Fetch properties and statuses
+$properties_query = "SELECT property_id, description FROM Properties";
+$properties_result = $conn->query($properties_query);
+
+$statuses_query = "SELECT status_id, status_name FROM MaintenanceStatuses";
+$statuses_result = $conn->query($statuses_query);
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Maintenance Task</title>
-    <link rel="stylesheet" type="text/css" href="/Apartmentmanagement/css/styles.css">
+    <link rel="stylesheet" type="text/css" href="/apartmentmanagement/css/styles.css">
 </head>
 <body>
-    <?php include('../includes/header.php'); ?>
-    <main>
-        <h2>Edit Maintenance Task</h2>
-        <form action="edit_task.php" method="post">
-            <input type="hidden" name="task_id" value="<?php echo $_GET['task_id']; ?>">
-            <input type="text" name="property_id" placeholder="Property ID" required>
-            <textarea name="description" placeholder="Description" required></textarea>
-            <input type="text" name="cost" placeholder="Cost" required>
-            <input type="text" name="status_id" placeholder="Status ID" required>
-            <button type="submit">Edit Task</button>
-        </form>
-        <?php 
-            $back_link = '/apartmentmanagement/index.php';
-            if ($is_admin) {
-                $back_link = '/apartmentmanagement/dashboards/administrator_dashboard.php';
-            } elseif ($is_tenant) {
-                $back_link = '/apartmentmanagement/dashboards/tenant_dashboard.php';
-            } elseif ($is_owner) {
-                $back_link = '/apartmentmanagement/dashboards/owner_dashboard.php';
-            }
-        ?>
-        <a class="back-button" href="<?php echo $back_link; ?>">Go back</a>
-    </main>
-    <?php include('../includes/footer.php'); ?>
+<?php include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/header.php'); ?>
+<main>
+    <h1>Edit Maintenance Task</h1>
+    <?php if ($message): ?>
+        <p><?= $message ?></p>
+    <?php endif; ?>
+    <form method="post">
+        <label for="task_id">Task ID:</label>
+        <input type="text" id="task_id" name="task_id" value="<?= $task_id ?>">
+        <br>
+        <?php if ($task_id && $task): ?>
+            <label for="property_id">Property:</label>
+            <select id="property_id" name="property_id" required>
+                <?php while ($row = $properties_result->fetch_assoc()): ?>
+                    <option value="<?= $row['property_id'] ?>" <?= $row['property_id'] == $task['property_id'] ? 'selected' : '' ?>>
+                        <?= $row['description'] ?>
+                    </option>
+                <?php endwhile; ?>
+            </select>
+            <br>
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" required><?= htmlspecialchars($task['description']) ?></textarea>
+            <br>
+            <label for="cost">Cost:</label>
+            <input type="text" id="cost" name="cost" value="<?= $task['cost'] ?>" required>
+            <br>
+            <label for="status_id">Status:</label>
+            <select id="status_id" name="status_id" required>
+                <?php while ($row = $statuses_result->fetch_assoc()): ?>
+                    <option value="<?= $row['status_id'] ?>" <?= $row['status_id'] == $task['status_id'] ? 'selected' : '' ?>>
+                        <?= $row['status_name'] ?>
+                    </option>
+                <?php endwhile; ?>
+            </select>
+        <?php else: ?>
+            <label for="property_id">Property:</label>
+            <select id="property_id" name="property_id" required>
+                <?php while ($row = $properties_result->fetch_assoc()): ?>
+                    <option value="<?= $row['property_id'] ?>"><?= $row['description'] ?></option>
+                <?php endwhile; ?>
+            </select>
+            <br>
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" required></textarea>
+            <br>
+            <label for="cost">Cost:</label>
+            <input type="text" id="cost" name="cost" required>
+            <br>
+            <label for="status_id">Status:</label>
+            <select id="status_id" name="status_id" required>
+                <?php while ($row = $statuses_result->fetch_assoc()): ?>
+                    <option value="<?= $row['status_id'] ?>"><?= $row['status_name'] ?></option>
+                <?php endwhile; ?>
+            </select>
+        <?php endif; ?>
+        <br>
+        <input type="submit" value="Update Task">
+    </form>
+    <?php 
+        $back_link = '/apartmentmanagement/index.php';
+        if ($is_admin) {
+            $back_link = '/apartmentmanagement/dashboards/administrator_dashboard.php';
+        } elseif ($is_tenant) {
+            $back_link = '/apartmentmanagement/dashboards/tenant_dashboard.php';
+        } elseif ($is_owner) {
+            $back_link = '/apartmentmanagement/dashboards/owner_dashboard.php';
+        }
+    ?>
+    <a class="back-button" href="<?php echo $back_link; ?>">Go back</a>
+</main>
+<?php include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/footer.php'); ?>
 </body>
 </html>
