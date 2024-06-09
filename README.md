@@ -14,10 +14,12 @@
 - fix all panels from admin dashboard
   - maintenance
   - rental agreements
-  - payments - NEEDS TO BE ADDED
   - properties + addresses
 - define types of properties, payments, documents, maintenance task statuses
 - documents storing and access
 - add panel that allows users modify their details
-- add panel with payments
-- add panels that allow you to view details of a specific property, user (only for admin or owner), rental agreement, payment, etc. links to pages should be in the table in the "view" panels
+- add panels that allow you to view details of: (links to pages should be in the table in the "view" panels)
+  - specific property,
+  - user (only for admin or owner),
+  - rental agreement,
+  - maintienance task
