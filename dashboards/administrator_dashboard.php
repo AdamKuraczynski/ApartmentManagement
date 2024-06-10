@@ -64,7 +64,7 @@ if (!isset($_SESSION['user_id']) || !check_user_role($conn, $_SESSION['user_id']
        
             <h3> Manage reports </h3>
             <ul>
-                <li><a href="../pdf/generate_pdf.php">Generate Report</a></li>
+                <li><a href="../pdf/generate_report.php">Generate Report</a></li>
             </ul>
 
             <h3> Manage users </h3>
