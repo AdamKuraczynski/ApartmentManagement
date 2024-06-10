@@ -11,11 +11,11 @@ if (!isset($_SESSION['user_id']) ||
     exit();
 }
 
-$query = "SELECT * FROM Payments";
+$query = "SELECT * FROM Payments JOIN rentalagreements on Payments.agreement_id = rentalagreements.agreement_id";
 if ($is_owner) {
     $query .= " WHERE property_id IN (SELECT property_id FROM Properties WHERE owner_id = '$user_id')";
 } elseif ($is_tenant) {
-    $query .= " WHERE agreement_id IN (SELECT agreement_id FROM RentalAgreements WHERE tenant_id = '$user_id')";
+    $query .= " WHERE payments.agreement_id IN (SELECT agreement_id FROM RentalAgreements WHERE tenant_id = '$user_id')";
 }
 
 $result = $conn->query($query);

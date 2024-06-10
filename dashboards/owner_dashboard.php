@@ -32,6 +32,12 @@ if (!isset($_SESSION['user_id']) || !check_user_role($conn, $_SESSION['user_id']
                 <li><a href="../rental/edit_agreement.php">Edit Rental Agreement</a></li>
                 <li><a href="../rental/view_agreement.php">View Rental Agreements</a></li>
             </ul>
+            <h3> Manage payments</h3>
+            <ul>
+                <li><a href="../payments/add_payment.php">Add Payment</a></li>
+                <li><a href="../payments/edit_payment.php">Edit Payment</a></li>
+                <li><a href="../payments/view_payment.php">View Payment</a></li>
+            </ul> 
             <h3>Manage documents</h3>
             <ul>
                 <li><a href="../documents/upload_document.php">Upload Document</a></li>

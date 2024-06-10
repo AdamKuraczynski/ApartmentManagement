@@ -21,14 +21,10 @@ ApartmentManagement is a web-based application designed to simplify the manageme
 
 ## To do:
 
+- add panel that allows users modify their details
 - add panels that allow you to view details of: (links to pages should be in the table in the "view" panels)
   - user (only for admin or owner),
 
 - define types of properties, payments, documents, maintenance task statuses
-- add panel that allows users modify their details
-
-- add some stuff to index.php as it it barren
-
 - verify functionality of all functions for all users
-
 - test adding, viewing, editing using all kinds of data and implement correct error handling if needed
