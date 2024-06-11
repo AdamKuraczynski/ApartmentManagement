@@ -36,8 +36,25 @@ $stmt->execute();
 $result = $stmt->get_result();
 $payment = $result->fetch_assoc();
 
+// Fetch the tenant_id for the logged-in user if they are a tenant
+if ($is_tenant) {
+    $tenant_query = "SELECT tenant_id FROM Tenants WHERE user_id = ?";
+    $tenant_stmt = $conn->prepare($tenant_query);
+    $tenant_stmt->bind_param("i", $user_id);
+    $tenant_stmt->execute();
+    $tenant_result = $tenant_stmt->get_result();
+    $tenant_data = $tenant_result->fetch_assoc();
+    $tenant_id = $tenant_data['tenant_id'];
+} else {
+    $tenant_id = null;
+}
+
+// Debugging output
+echo "<!-- is_admin: $is_admin, is_owner: $is_owner, is_tenant: $is_tenant -->";
+echo "<!-- payment_owner_id: " . htmlspecialchars($payment['owner_id']) . ", payment_tenant_id: " . htmlspecialchars($payment['tenant_id']) . ", user_id: $user_id, tenant_id: $tenant_id -->";
+
 // Validate access
-if (!$payment || ($is_owner && $payment['owner_id'] != $user_id) || ($is_tenant && $payment['tenant_id'] != $user_id)) {
+if (!$payment || ($is_owner && $payment['owner_id'] != $user_id) || ($is_tenant && $payment['tenant_id'] != $tenant_id)) {
     echo "Access denied.";
     exit();
 }
