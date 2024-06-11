@@ -26,7 +26,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $payment_id) {
         $message = "Successfully updated payment.";
 
         // Fetch updated payment data
-        $query = "SELECT * FROM Payments WHERE payment_id = ?";
+        $query = "
+            SELECT p.*, ra.property_id, pr.owner_id 
+            FROM Payments p 
+            JOIN RentalAgreements ra ON p.agreement_id = ra.agreement_id 
+            JOIN Properties pr ON ra.property_id = pr.property_id 
+            WHERE p.payment_id = ?
+        ";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("i", $payment_id);
         $stmt->execute();
@@ -36,7 +42,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $payment_id) {
         $message = "Error: " . $conn->error;
     }
 } else if ($payment_id) {
-    $query = "SELECT * FROM Payments WHERE payment_id = ?";
+    $query = "
+        SELECT p.*, ra.property_id, pr.owner_id 
+        FROM Payments p 
+        JOIN RentalAgreements ra ON p.agreement_id = ra.agreement_id 
+        JOIN Properties pr ON ra.property_id = pr.property_id 
+        WHERE p.payment_id = ?
+    ";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $payment_id);
     $stmt->execute();
@@ -52,7 +64,7 @@ $user_id = $_SESSION['user_id'];
 $is_admin = check_user_role($conn, $user_id, 'administrator');
 $is_owner = check_user_role($conn, $user_id, 'owner');
 
-if ($payment_id && $is_owner && !is_owner_of_property($conn, $user_id, $payment['property_id'])) {
+if ($payment_id && $is_owner && $payment && $payment['owner_id'] != $user_id) {
     echo "Access denied.";
     exit();
 }
@@ -79,20 +91,20 @@ $payment_types_result = $conn->query($payment_types_query);
     <?php endif; ?>
     <form method="post">
         <label for="payment_id">Payment ID:</label>
-        <input type="text" id="payment_id" name="payment_id" value="<?= $payment_id ?>" required>
+        <input type="text" id="payment_id" name="payment_id" value="<?= htmlspecialchars($payment_id) ?>" required readonly>
         <br>
         <?php if ($payment_id && $payment): ?>
             <label for="amount">Amount:</label>
-            <input type="text" id="amount" name="amount" value="<?= $payment['amount'] ?>" required>
+            <input type="text" id="amount" name="amount" value="<?= htmlspecialchars($payment['amount']) ?>" required>
             <br>
             <label for="payment_date">Date:</label>
-            <input type="date" id="payment_date" name="payment_date" value="<?= $payment['payment_date'] ?>" required>
+            <input type="date" id="payment_date" name="payment_date" value="<?= htmlspecialchars($payment['payment_date']) ?>" required>
             <br>
             <label for="payment_type_id">Payment Type:</label>
             <select id="payment_type_id" name="payment_type_id" required>
                 <?php while ($row = $payment_types_result->fetch_assoc()): ?>
                     <option value="<?= $row['payment_type_id'] ?>" <?= $row['payment_type_id'] == $payment['payment_type_id'] ? 'selected' : '' ?>>
-                        <?= $row['payment_type_name'] ?>
+                        <?= htmlspecialchars($row['payment_type_name']) ?>
                     </option>
                 <?php endwhile; ?>
             </select>
@@ -106,7 +118,7 @@ $payment_types_result = $conn->query($payment_types_query);
             <label for="payment_type_id">Payment Type:</label>
             <select id="payment_type_id" name="payment_type_id" required>
                 <?php while ($row = $payment_types_result->fetch_assoc()): ?>
-                    <option value="<?= $row['payment_type_id'] ?>"><?= $row['payment_type_name'] ?></option>
+                    <option value="<?= htmlspecialchars($row['payment_type_id']) ?>"><?= htmlspecialchars($row['payment_type_name']) ?></option>
                 <?php endwhile; ?>
             </select>
         <?php endif; ?>
@@ -117,13 +129,11 @@ $payment_types_result = $conn->query($payment_types_query);
         $back_link = '/apartmentmanagement/index.php';
         if ($is_admin) {
             $back_link = '/apartmentmanagement/dashboards/administrator_dashboard.php';
-        } elseif ($is_tenant) {
-            $back_link = '/apartmentmanagement/dashboards/tenant_dashboard.php';
         } elseif ($is_owner) {
             $back_link = '/apartmentmanagement/dashboards/owner_dashboard.php';
         }
     ?>
-    <a class="back-button" href="<?php echo $back_link; ?>">Go back</a>
+    <a class="back-button" href="<?= htmlspecialchars($back_link); ?>">Go back</a>
 </main>
 <?php include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/footer.php'); ?>
 </body>
