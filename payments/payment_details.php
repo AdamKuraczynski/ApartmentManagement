@@ -24,10 +24,15 @@ $is_tenant = check_user_role($conn, $user_id, 'tenant');
 
 // Prepare the SQL query to fetch payment details along with agreement and property details
 $query = "
-    SELECT p.*, ra.property_id, ra.tenant_id, pr.owner_id 
+    SELECT p.*, ra.property_id, ra.tenant_id, pr.owner_id, 
+           t_user.username AS tenant_username, 
+           o_user.username AS owner_username
     FROM Payments p 
     JOIN RentalAgreements ra ON p.agreement_id = ra.agreement_id 
     JOIN Properties pr ON ra.property_id = pr.property_id 
+    JOIN Tenants ten ON ra.tenant_id = ten.tenant_id
+    JOIN Users t_user ON ten.user_id = t_user.user_id
+    JOIN Users o_user ON pr.owner_id = o_user.user_id
     WHERE p.payment_id = ?
 ";
 $stmt = $conn->prepare($query);
@@ -76,9 +81,12 @@ if (!$payment || ($is_owner && $payment['owner_id'] != $user_id) || ($is_tenant 
         <h1>Payment Details</h1>
         <p><strong>ID: </strong><?= htmlspecialchars($payment['payment_id']) ?></p>
         <p><strong>Agreement ID: </strong><?= htmlspecialchars($payment['agreement_id']) ?></p>
+        <p><strong>Property ID: </strong><?= htmlspecialchars($payment['property_id']) ?></p>
         <p><strong>Date: </strong><?= htmlspecialchars($payment['payment_date']) ?></p>
         <p><strong>Amount: </strong><?= htmlspecialchars($payment['amount']) ?></p>
         <p><strong>Payment Type: </strong><?= htmlspecialchars($payment['payment_type_id']) ?></p>
+        <p><strong>Payer: </strong><?= htmlspecialchars($payment['tenant_username']) ?></p> <!-- Dodany payer -->
+        <p><strong>Payee: </strong><?= htmlspecialchars($payment['owner_username']) ?></p> <!-- Dodany payee -->
     </div>
 </div>
 
