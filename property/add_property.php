@@ -3,14 +3,24 @@ include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/auth.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/db.php'); 
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/functions.php'); 
 
-// Check if the user is logged in and has the correct role (administrator)
-if (!isset($_SESSION['user_id']) || !check_user_role($conn, $_SESSION['user_id'], 'administrator')) {
+// Check if the user is logged in and has the correct role (administrator or owner)
+if (!isset($_SESSION['user_id']) || 
+    !(check_user_role($conn, $_SESSION['user_id'], 'administrator') || 
+      check_user_role($conn, $_SESSION['user_id'], 'owner'))) {
     header("Location: /apartmentmanagement/index.php");
     exit();
 }
 
+$user_id = $_SESSION['user_id'];
+$is_admin = check_user_role($conn, $user_id, 'administrator');
+$is_owner = check_user_role($conn, $user_id, 'owner');
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $owner_id = sanitize_input($_POST["owner_id"]);
+    if ($is_admin) {
+        $owner_id = sanitize_input($_POST["owner_id"]);
+    } else if ($is_owner) {
+        $owner_id = $user_id;
+    }
     $street = sanitize_input($_POST["street"]);
     $city = sanitize_input($_POST["city"]);
     $state = sanitize_input($_POST["state"]);
@@ -30,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Insert property into the database
         $stmt = $conn->prepare("INSERT INTO Properties (owner_id, address_id, type_id, number_of_rooms, size, rental_price, description) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("iiiidss", $owner_id, $address_id, $type_id, $number_of_rooms, $size, $rental_price, $description);
+        $stmt->bind_param("iiidsss", $owner_id, $address_id, $type_id, $number_of_rooms, $size, $rental_price, $description);
         if ($stmt->execute()) {
             echo "Property added successfully!";
             header("Location: /apartmentmanagement/property/view_property.php");
@@ -59,19 +69,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <main>
         <h2>Add Property</h2>
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-            <label for="owner_id">Owner:</label>
-            <select name="owner_id" id="owner_id" required>
-                <?php
-                $result = $conn->query("
-                    SELECT u.user_id, u.username 
-                    FROM Users u 
-                    JOIN Owners o ON u.user_id = o.user_id 
-                ");
-                while ($row = $result->fetch_assoc()) {
-                    echo '<option value="' . htmlspecialchars($row['user_id']) . '">' . htmlspecialchars($row['username']) . '</option>';
-                }
-                ?>
-            </select><br>
+            <?php if ($is_admin): ?>
+                <label for="owner_id">Owner:</label>
+                <select name="owner_id" id="owner_id" required>
+                    <?php
+                    $result = $conn->query("
+                        SELECT u.user_id, u.username 
+                        FROM Users u 
+                        JOIN Owners o ON u.user_id = o.user_id 
+                    ");
+                    while ($row = $result->fetch_assoc()) {
+                        echo '<option value="' . htmlspecialchars($row['user_id']) . '">' . htmlspecialchars($row['username']) . '</option>';
+                    }
+                    ?>
+                </select><br>
+            <?php endif; ?>
             <label for="street">Street:</label> 
             <input type="text" name="street" id="street" required><br>
             <label for="city">City:</label> 
@@ -105,8 +117,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $back_link = '/apartmentmanagement/index.php';
             if ($is_admin) {
                 $back_link = '/apartmentmanagement/dashboards/administrator_dashboard.php';
-            } elseif ($is_tenant) {
-                $back_link = '/apartmentmanagement/dashboards/tenant_dashboard.php';
             } elseif ($is_owner) {
                 $back_link = '/apartmentmanagement/dashboards/owner_dashboard.php';
             }

@@ -23,7 +23,7 @@ if (!isset($_SESSION['user_id']) || !check_user_role($conn, $_SESSION['user_id']
         <div class="dashboard">
             <h3>Manage all properties</h3>
             <ul>
-                <li><a href="../property/edit_property.php">Edit Property</a></li>
+                <li><a href="../property/add_property.php">Add Property</a></li>
                 <li><a href="../property/view_property.php">View Property</a></li>
             </ul>
             <h3>Manage agreements</h3>
