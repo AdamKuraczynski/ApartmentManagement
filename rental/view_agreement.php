@@ -19,36 +19,37 @@ $is_tenant = check_user_role($conn, $user_id, 'tenant');
 // Prepare the SQL query based on the user's role
 if ($is_admin) {
     $stmt = $conn->prepare("
-        SELECT ra.agreement_id, ra.property_id, ra.tenant_id, ra.start_date, ra.end_date, ra.rent_amount, ra.security_deposit, 
+        SELECT ra.agreement_id, ra.property_id, ra.start_date, ra.end_date, ra.rent_amount, 
                p.description AS property_description,
-               u.username AS tenant_username
+               tu.username AS tenant_username,
+               ou.username AS owner_username
         FROM RentalAgreements ra
         JOIN Properties p ON ra.property_id = p.property_id
         JOIN Tenants t ON ra.tenant_id = t.tenant_id
-        JOIN Users u ON t.user_id = u.user_id
+        JOIN Users tu ON t.user_id = tu.user_id
+        JOIN Users ou ON p.owner_id = ou.user_id
     ");
 } else if ($is_owner) {
     $stmt = $conn->prepare("
-        SELECT ra.agreement_id, ra.property_id, ra.tenant_id, ra.start_date, ra.end_date, ra.rent_amount, ra.security_deposit, 
+        SELECT ra.agreement_id, ra.property_id, ra.start_date, ra.end_date, ra.rent_amount, 
                p.description AS property_description,
-               u.username AS tenant_username
+               tu.username AS tenant_username
         FROM RentalAgreements ra
         JOIN Properties p ON ra.property_id = p.property_id
         JOIN Tenants t ON ra.tenant_id = t.tenant_id
-        JOIN Users u ON t.user_id = u.user_id
+        JOIN Users tu ON t.user_id = tu.user_id
         WHERE p.owner_id = ?
     ");
     $stmt->bind_param("i", $user_id);
 } else if ($is_tenant) {
     $stmt = $conn->prepare("
-        SELECT ra.agreement_id, ra.property_id, ra.tenant_id, ra.start_date, ra.end_date, ra.rent_amount, ra.security_deposit, 
+        SELECT ra.agreement_id, ra.property_id, ra.start_date, ra.end_date, ra.rent_amount, 
                p.description AS property_description,
-               u.username AS tenant_username
+               ou.username AS owner_username
         FROM RentalAgreements ra
         JOIN Properties p ON ra.property_id = p.property_id
-        JOIN Tenants t ON ra.tenant_id = t.tenant_id
-        JOIN Users u ON t.user_id = u.user_id
-        WHERE t.user_id = ?
+        JOIN Users ou ON p.owner_id = ou.user_id
+        WHERE ra.tenant_id = (SELECT tenant_id FROM Tenants WHERE user_id = ?)
     ");
     $stmt->bind_param("i", $user_id);
 }
@@ -75,11 +76,15 @@ $result = $stmt->get_result();
                     <tr>
                         <th>Agreement ID</th>
                         <th>Property Description</th>
-                        <th>Tenant Username</th>
+                        <?php if ($is_admin || $is_owner): ?>
+                            <th>Tenant Username</th>
+                        <?php endif; ?>
+                        <?php if ($is_admin || $is_tenant): ?>
+                            <th>Owner Username</th>
+                        <?php endif; ?>
                         <th>Start Date</th>
                         <th>End Date</th>
                         <th>Rent Amount</th>
-                        <th>Security Deposit</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -88,11 +93,15 @@ $result = $stmt->get_result();
                     <tr>
                         <td><?php echo htmlspecialchars($row['agreement_id']); ?></td>
                         <td><?php echo htmlspecialchars($row['property_description']); ?></td>
-                        <td><?php echo htmlspecialchars($row['tenant_username']); ?></td>
+                        <?php if ($is_admin || $is_owner): ?>
+                            <td><?php echo htmlspecialchars($row['tenant_username']); ?></td>
+                        <?php endif; ?>
+                        <?php if ($is_admin || $is_tenant): ?>
+                            <td><?php echo htmlspecialchars($row['owner_username']); ?></td>
+                        <?php endif; ?>
                         <td><?php echo htmlspecialchars($row['start_date']); ?></td>
                         <td><?php echo htmlspecialchars($row['end_date']); ?></td>
                         <td><?php echo htmlspecialchars($row['rent_amount']); ?></td>
-                        <td><?php echo htmlspecialchars($row['security_deposit']); ?></td>
                         <td>
                             <a href="/apartmentmanagement/rental/agreement_details.php?agreement_id=<?php echo htmlspecialchars($row['agreement_id']); ?>">Details</a>
                             <?php if ($is_admin || $is_owner): ?>
