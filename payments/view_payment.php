@@ -17,9 +17,10 @@ $is_tenant = check_user_role($conn, $_SESSION['user_id'], 'tenant');
 
 $user_id = $_SESSION['user_id'];
 
-$query = "SELECT Payments.payment_id, Payments.agreement_id, Payments.payment_date, Payments.amount, Payments.payment_type_id 
+$query = "SELECT Payments.payment_id, Payments.agreement_id, Payments.payment_date, Payments.amount, Payments.payment_type_id, Properties.description as property_description 
           FROM Payments 
-          JOIN RentalAgreements ON Payments.agreement_id = RentalAgreements.agreement_id";
+          JOIN RentalAgreements ON Payments.agreement_id = RentalAgreements.agreement_id
+          JOIN Properties ON RentalAgreements.property_id = Properties.property_id";
 
 if ($is_owner) {
     $query .= " WHERE RentalAgreements.property_id IN (SELECT property_id FROM Properties WHERE owner_id = '$user_id')";
@@ -52,10 +53,12 @@ if ($result->num_rows === 0) {
 <main>
     <h1>All Payments</h1>
     <table>
+    <?php if ($result->num_rows > 0): ?>
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Agreement ID</th>
+                <th>Property</th>
                 <th>Date</th>
                 <th>Amount</th>
                 <th>Type</th>
@@ -67,6 +70,7 @@ if ($result->num_rows === 0) {
                 <tr>
                     <td><?= htmlspecialchars($payment['payment_id']) ?></td>
                     <td><?= htmlspecialchars($payment['agreement_id']) ?></td>
+                    <td><?= htmlspecialchars($payment['property_description']) ?></td>
                     <td><?= htmlspecialchars($payment['payment_date']) ?></td>
                     <td><?= htmlspecialchars($payment['amount']) ?></td>
                     <td><?= htmlspecialchars($payment['payment_type_id']) ?></td>
@@ -79,6 +83,11 @@ if ($result->num_rows === 0) {
                 </tr>
             <?php endwhile; ?>
         </tbody>
+        <?php else: ?>
+            <tr>
+                <td colspan="7">You don't have any payments at the moment.</td>
+            </tr>
+        <?php endif; ?>
     </table>
     <?php 
         $back_link = '/apartmentmanagement/index.php';
