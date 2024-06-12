@@ -21,11 +21,12 @@ if (!isset($_SESSION['user_id']) || !check_user_role($conn, $_SESSION['user_id']
         <h2>Tenant Dashboard</h2>
         <br/>
         <div class="dashboard">
-            <h3>Manage agreements</h3>
+        <h3>My rental</h3>
             <ul>
+                <li><a href="../property/view_property.php">View Property</a></li>
                 <li><a href="../rental/view_agreement.php">View Rental Agreement</a></li>
             </ul>
-            <h3>Manage maintenance tasks</h3>
+            <h3>Maintenance Tasks</h3>
             <ul>
                 <li><a href="../maintenance/add_task.php">Add Maintenance Task</a></li>
                 <li><a href="../maintenance/view_task.php">View Maintenance Task</a></li>

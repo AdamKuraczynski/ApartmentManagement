@@ -19,18 +19,18 @@ $is_tenant = check_user_role($conn, $user_id, 'tenant');
 // Prepare the SQL query based on the user's role
 if ($is_admin) {
     $stmt = $conn->prepare("
-       SELECT p.property_id, p.owner_id, p.address_id, p.type_id, p.number_of_rooms, p.size, p.rental_price, p.description,
-               a.street, a.city, a.state, a.postal_code, a.country,
-               pt.type_name
+        SELECT p.property_id, p.owner_id, ud.first_name, ud.last_name, u.username, p.address_id, p.type_id,
+               a.street, a.city, a.state, a.postal_code, a.country, pt.type_name
         FROM Properties p
         JOIN Addresses a ON p.address_id = a.address_id
         JOIN PropertyTypes pt ON p.type_id = pt.type_id
+        JOIN Users u ON p.owner_id = u.user_id
+        JOIN UserDetails ud ON u.user_id = ud.user_id
     ");
 } else if ($is_owner) {
     $stmt = $conn->prepare("
-        SELECT p.property_id, p.owner_id, p.address_id, p.type_id, p.number_of_rooms, p.size, p.rental_price, p.description,
-               a.street, a.city, a.state, a.postal_code, a.country,
-               pt.type_name
+        SELECT p.property_id, p.owner_id, p.address_id, p.type_id,
+               a.street, a.city, a.state, a.postal_code, a.country, pt.type_name
         FROM Properties p
         JOIN Addresses a ON p.address_id = a.address_id
         JOIN PropertyTypes pt ON p.type_id = pt.type_id
@@ -39,14 +39,15 @@ if ($is_admin) {
     $stmt->bind_param("i", $user_id);
 } else if ($is_tenant) {
     $stmt = $conn->prepare("
-        SELECT p.property_id, p.owner_id, p.address_id, p.type_id, p.number_of_rooms, p.size, p.rental_price, p.description,
-               a.street, a.city, a.state, a.postal_code, a.country,
-               pt.type_name
+        SELECT p.property_id, ud.first_name, ud.last_name, u.username, p.address_id, p.type_id,
+               a.street, a.city, a.state, a.postal_code, a.country, pt.type_name
         FROM Properties p
         JOIN Addresses a ON p.address_id = a.address_id
         JOIN PropertyTypes pt ON p.type_id = pt.type_id
         JOIN RentalAgreements ra ON p.property_id = ra.property_id
         JOIN Tenants t ON ra.tenant_id = t.tenant_id
+        JOIN Users u ON p.owner_id = u.user_id
+        JOIN UserDetails ud ON u.user_id = ud.user_id
         WHERE t.user_id = ?
     ");
     $stmt->bind_param("i", $user_id);
@@ -72,31 +73,33 @@ $result = $stmt->get_result();
         <?php if ($result->num_rows > 0): ?>
             <thead>
                 <tr>
-                    <th>Property ID</th>
-                    <th>Owner ID</th>
+                    <?php if ($is_admin): ?>
+                        <th>Property ID</th>
+                        <th>Owner ID</th>
+                        <th>Owner Name</th>
+                    <?php elseif ($is_tenant): ?>
+                        <th>Owner Name</th>
+                    <?php endif; ?>
                     <th>Address</th>
                     <th>Type</th>
-                    <th>Number of Rooms</th>
-                    <th>Size</th>
-                    <th>Rental Price</th>
-                    <th>Description</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <?php while ($row = $result->fetch_assoc()): ?>
                 <tr>
-                    <td><?php echo htmlspecialchars($row['property_id']); ?></td>
-                    <td><?php echo htmlspecialchars($row['owner_id']); ?></td>
+                    <?php if ($is_admin): ?>
+                        <td><?php echo htmlspecialchars($row['property_id']); ?></td>
+                        <td><?php echo htmlspecialchars($row['owner_id']); ?></td>
+                        <td><?php echo htmlspecialchars($row['first_name'] . ' ' . $row['last_name'] . ' (' . $row['username'] . ')'); ?></td>
+                    <?php elseif ($is_tenant): ?>
+                        <td><?php echo htmlspecialchars($row['first_name'] . ' ' . $row['last_name'] . ' (' . $row['username'] . ')'); ?></td>
+                    <?php endif; ?>
                     <td><?php echo htmlspecialchars($row['street'] . ', ' . $row['city'] . ', ' . $row['state'] . ', ' . $row['postal_code'] . ', ' . $row['country']); ?></td>
                     <td><?php echo htmlspecialchars($row['type_name']); ?></td>
-                    <td><?php echo htmlspecialchars($row['number_of_rooms']); ?></td>
-                    <td><?php echo htmlspecialchars($row['size']); ?></td>
-                    <td><?php echo htmlspecialchars($row['rental_price']); ?></td>
-                    <td><?php echo htmlspecialchars($row['description']); ?></td>
                     <td>
                         <a href="/apartmentmanagement/property/property_details.php?property_id=<?php echo htmlspecialchars($row['property_id']); ?>">Details</a>
-                        <?php if ($is_admin || $is_owner): ?>
+                        <?php if ($is_admin || ($is_owner && $row['owner_id'] == $user_id)): ?>
                             <a href="edit_property.php?id=<?= $row['property_id'] ?>">Edit</a>
                         <?php endif; ?>
                     </td>
@@ -104,7 +107,7 @@ $result = $stmt->get_result();
                 <?php endwhile; ?>
         <?php else: ?>
             <tr>
-                <td colspan="9">
+                <td colspan="<?php echo $is_admin ? '5' : '4'; ?>">
                     <?php if ($is_owner): ?> You don't have any properties.<?php else: ?> Nothing to show yet.<?php endif; ?>
                 </td>
             </tr>
