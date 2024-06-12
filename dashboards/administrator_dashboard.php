@@ -32,7 +32,6 @@ if (!isset($_SESSION['user_id']) || !check_user_role($conn, $_SESSION['user_id']
             <h3> Manage agreements </h3>
             <ul>
                 <li><a href="../rental/add_agreement.php">Add Rental Agreement</a></li>
-                <li><a href="../rental/edit_agreement.php">Edit Rental Agreement</a></li>
                 <li><a href="../rental/view_agreement.php">View Rental Agreements</a></li>
             </ul>
        

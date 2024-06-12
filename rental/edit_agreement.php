@@ -56,10 +56,10 @@ $is_admin = check_user_role($conn, $user_id, 'administrator');
 $is_owner = check_user_role($conn, $user_id, 'owner');
 
 // Fetch properties and tenants
-$properties_query = "SELECT property_id, description FROM Properties";
+$properties_query = $is_admin ? "SELECT property_id, description FROM Properties" : "SELECT property_id, description FROM Properties WHERE owner_id = $user_id";
 $properties_result = $conn->query($properties_query);
 
-$tenants_query = "SELECT tenant_id, user_id FROM Tenants";
+$tenants_query = "SELECT t.tenant_id, u.username FROM Tenants t JOIN Users u ON t.user_id = u.user_id";
 $tenants_result = $conn->query($tenants_query);
 ?>
 
@@ -80,14 +80,14 @@ $tenants_result = $conn->query($tenants_query);
     <?php endif; ?>
     <form method="post">
         <label for="agreement_id">Agreement ID:</label>
-        <input type="text" id="agreement_id" name="agreement_id" value="<?= $agreement_id ?>">
+        <input type="text" id="agreement_id" name="agreement_id" value="<?= htmlspecialchars($agreement_id) ?>" readonly>
         <br>
         <?php if ($agreement_id && $agreement): ?>
             <label for="property_id">Property:</label>
             <select id="property_id" name="property_id" required>
                 <?php while ($row = $properties_result->fetch_assoc()): ?>
                     <option value="<?= $row['property_id'] ?>" <?= $row['property_id'] == $agreement['property_id'] ? 'selected' : '' ?>>
-                        <?= $row['description'] ?>
+                        <?= htmlspecialchars($row['description']) ?>
                     </option>
                 <?php endwhile; ?>
             </select>
@@ -96,34 +96,34 @@ $tenants_result = $conn->query($tenants_query);
             <select id="tenant_id" name="tenant_id" required>
                 <?php while ($row = $tenants_result->fetch_assoc()): ?>
                     <option value="<?= $row['tenant_id'] ?>" <?= $row['tenant_id'] == $agreement['tenant_id'] ? 'selected' : '' ?>>
-                        <?= $row['user_id'] ?>
+                        <?= htmlspecialchars($row['username']) ?>
                     </option>
                 <?php endwhile; ?>
             </select>
             <br>
             <label for="start_date">Start Date:</label>
-            <input type="date" id="start_date" name="start_date" value="<?= $agreement['start_date'] ?>" required>
+            <input type="date" id="start_date" name="start_date" value="<?= htmlspecialchars($agreement['start_date']) ?>" required>
             <br>
             <label for="end_date">End Date:</label>
-            <input type="date" id="end_date" name="end_date" value="<?= $agreement['end_date'] ?>" required>
+            <input type="date" id="end_date" name="end_date" value="<?= htmlspecialchars($agreement['end_date']) ?>" required>
             <br>
             <label for="rent_amount">Rent Amount:</label>
-            <input type="text" id="rent_amount" name="rent_amount" value="<?= $agreement['rent_amount'] ?>" required>
+            <input type="text" id="rent_amount" name="rent_amount" value="<?= htmlspecialchars($agreement['rent_amount']) ?>" required>
             <br>
             <label for="security_deposit">Security Deposit:</label>
-            <input type="text" id="security_deposit" name="security_deposit" value="<?= $agreement['security_deposit'] ?>" required>
+            <input type="text" id="security_deposit" name="security_deposit" value="<?= htmlspecialchars($agreement['security_deposit']) ?>" required>
         <?php else: ?>
             <label for="property_id">Property:</label>
             <select id="property_id" name="property_id" required>
                 <?php while ($row = $properties_result->fetch_assoc()): ?>
-                    <option value="<?= $row['property_id'] ?>"><?= $row['description'] ?></option>
+                    <option value="<?= $row['property_id'] ?>"><?= htmlspecialchars($row['description']) ?></option>
                 <?php endwhile; ?>
             </select>
             <br>
             <label for="tenant_id">Tenant:</label>
             <select id="tenant_id" name="tenant_id" required>
                 <?php while ($row = $tenants_result->fetch_assoc()): ?>
-                    <option value="<?= $row['tenant_id'] ?>"><?= $row['user_id'] ?></option>
+                    <option value="<?= $row['tenant_id'] ?>"><?= htmlspecialchars($row['username']) ?></option>
                 <?php endwhile; ?>
             </select>
             <br>
@@ -145,11 +145,11 @@ $tenants_result = $conn->query($tenants_query);
     <?php 
         $back_link = '/apartmentmanagement/index.php';
         if ($is_admin) {
-            $back_link = '/apartmentmanagement/dashboards/administrator_dashboard.php';
+            $back_link = '/apartmentmanagement/rental/view_agreement.php';
         } elseif ($is_tenant) {
-            $back_link = '/apartmentmanagement/dashboards/tenant_dashboard.php';
+            $back_link = '/apartmentmanagement/rental/view_agreement.php';
         } elseif ($is_owner) {
-            $back_link = '/apartmentmanagement/dashboards/owner_dashboard.php';
+            $back_link = '/apartmentmanagement/rental/view_agreement.php';
         }
     ?>
     <a class="back-button" href="<?php echo $back_link; ?>">Go back</a>
