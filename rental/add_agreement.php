@@ -10,21 +10,47 @@ if (!isset($_SESSION['user_id']) ||
     exit();
 }
 
+$user_id = $_SESSION['user_id'];
+$is_admin = check_user_role($conn, $user_id, 'administrator');
+$is_owner = check_user_role($conn, $user_id, 'owner');
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Handle form submission to add rental agreement
     $property_id = $_POST['property_id'];
     $tenant_id = $_POST['tenant_id'];
     $start_date = $_POST['start_date'];
     $end_date = $_POST['end_date'];
-    // Add other agreement fields here
+    $rent_amount = $_POST['rent_amount'];
+    $security_deposit = $_POST['security_deposit'];
     
     // SQL query to insert rental agreement
-    $stmt = $conn->prepare("INSERT INTO RentalAgreements (property_id, tenant_id, start_date, end_date) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("iiss", $property_id, $tenant_id, $start_date, $end_date);
+    $stmt = $conn->prepare("INSERT INTO RentalAgreements (property_id, tenant_id, start_date, end_date, rent_amount, security_deposit) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("iissdd", $property_id, $tenant_id, $start_date, $end_date, $rent_amount, $security_deposit);
     $stmt->execute();
     
     echo "Rental agreement added successfully.";
 }
+
+// Fetch properties for the dropdown list
+if ($is_admin) {
+    $properties_query = "SELECT property_id, description FROM Properties";
+} else if ($is_owner) {
+    $properties_query = "SELECT property_id, description FROM Properties WHERE owner_id = ?";
+}
+
+$properties_stmt = $conn->prepare($properties_query);
+if ($is_owner) {
+    $properties_stmt->bind_param("i", $user_id);
+}
+$properties_stmt->execute();
+$properties_result = $properties_stmt->get_result();
+
+// Fetch tenants for the dropdown list
+$tenants_query = "
+    SELECT t.tenant_id, u.username 
+    FROM Tenants t 
+    JOIN Users u ON t.user_id = u.user_id";
+$tenants_result = $conn->query($tenants_query);
 
 ?>
 
@@ -34,18 +60,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Rental Agreement</title>
-    <link rel="stylesheet" type="text/css" href="/Apartmentmanagement/css/styles.css">
+    <link rel="stylesheet" type="text/css" href="/apartmentmanagement/css/styles.css">
 </head>
 <body>
     <?php include('../includes/header.php'); ?>
     <main>
         <h2>Add Rental Agreement</h2>
         <form action="add_agreement.php" method="post">
-            <input type="text" name="property_id" placeholder="Property ID" required>
-            <input type="text" name="tenant_id" placeholder="Tenant ID" required>
+            <label for="property_id">Property:</label>
+            <select name="property_id" id="property_id" required>
+                <option value="" disabled selected>Select a property</option>
+                <?php while ($property = $properties_result->fetch_assoc()): ?>
+                    <option value="<?php echo htmlspecialchars($property['property_id']); ?>">
+                        <?php echo htmlspecialchars($property['description']); ?>
+                    </option>
+                <?php endwhile; ?>
+            </select>
+            
+            <label for="tenant_id">Tenant:</label>
+            <select name="tenant_id" id="tenant_id" required>
+                <option value="" disabled selected>Select a tenant</option>
+                <?php while ($tenant = $tenants_result->fetch_assoc()): ?>
+                    <option value="<?php echo htmlspecialchars($tenant['tenant_id']); ?>">
+                        <?php echo htmlspecialchars($tenant['username']); ?>
+                    </option>
+                <?php endwhile; ?>
+            </select>
+            
             <input type="date" name="start_date" placeholder="Start Date" required>
             <input type="date" name="end_date" placeholder="End Date" required>
-            <!-- Add other agreement fields here -->
+            <input type="text" name="rent_amount" placeholder="Rent Amount" required>
+            <input type="text" name="security_deposit" placeholder="Security Deposit" required>
             <button type="submit">Add Agreement</button>
         </form>
         <?php 

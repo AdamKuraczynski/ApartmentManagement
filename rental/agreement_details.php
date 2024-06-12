@@ -26,13 +26,18 @@ $is_tenant = check_user_role($conn, $user_id, 'tenant');
 $stmt = $conn->prepare("
     SELECT ra.agreement_id, ra.property_id, ra.tenant_id, ra.start_date, ra.end_date, ra.rent_amount, ra.security_deposit, 
            p.description AS property_description, 
-           u.username AS tenant_username, u.email AS tenant_email,
-           ud.first_name AS tenant_first_name, ud.last_name AS tenant_last_name
+           tu.username AS tenant_username, tu.email AS tenant_email,
+           tud.first_name AS tenant_first_name, tud.last_name AS tenant_last_name,
+           ou.username AS owner_username, ou.email AS owner_email,
+           oud.first_name AS owner_first_name, oud.last_name AS owner_last_name
     FROM RentalAgreements ra
     JOIN Properties p ON ra.property_id = p.property_id
     JOIN Tenants t ON ra.tenant_id = t.tenant_id
-    JOIN Users u ON t.user_id = u.user_id
-    JOIN UserDetails ud ON u.user_id = ud.user_id
+    JOIN Users tu ON t.user_id = tu.user_id
+    JOIN UserDetails tud ON tu.user_id = tud.user_id
+    JOIN Owners o ON p.owner_id = o.user_id
+    JOIN Users ou ON o.user_id = ou.user_id
+    JOIN UserDetails oud ON ou.user_id = oud.user_id
     WHERE ra.agreement_id = ?
 ");
 
@@ -78,15 +83,22 @@ if (!$agreement) {
                 <p><strong>Last Name:</strong> <?php echo htmlspecialchars($agreement['tenant_last_name']); ?></p>
                 <p><strong>Email:</strong> <?php echo htmlspecialchars($agreement['tenant_email']); ?></p>
             </div>
+            <div class="property-section">
+                <h3>Owner Information</h3>
+                <p><strong>Username:</strong> <?php echo htmlspecialchars($agreement['owner_username']); ?></p>
+                <p><strong>First Name:</strong> <?php echo htmlspecialchars($agreement['owner_first_name']); ?></p>
+                <p><strong>Last Name:</strong> <?php echo htmlspecialchars($agreement['owner_last_name']); ?></p>
+                <p><strong>Email:</strong> <?php echo htmlspecialchars($agreement['owner_email']); ?></p>
+            </div>
         </div>
         <?php 
             $back_link = '/apartmentmanagement/index.php';
             if ($is_admin) {
-                $back_link = '/apartmentmanagement/dashboards/administrator_dashboard.php';
+                $back_link = '/apartmentmanagement/rental/view_agreement.php';
             } elseif ($is_tenant) {
-                $back_link = '/apartmentmanagement/dashboards/tenant_dashboard.php';
+                $back_link = '/apartmentmanagement/rental/view_agreement.php';
             } elseif ($is_owner) {
-                $back_link = '/apartmentmanagement/dashboards/owner_dashboard.php';
+                $back_link = '/apartmentmanagement/rental/view_agreement.php';
             }
         ?>
         <a class="back-button" href="<?php echo $back_link; ?>">Go back</a>
@@ -94,3 +106,4 @@ if (!$agreement) {
     <?php include('../includes/footer.php'); ?>
 </body>
 </html>
+

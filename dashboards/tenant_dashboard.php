@@ -21,7 +21,7 @@ if (!isset($_SESSION['user_id']) || !check_user_role($conn, $_SESSION['user_id']
         <h2>Tenant Dashboard</h2>
         <br/>
         <div class="dashboard">
-        <h3>My rental</h3>
+        <h3>My Rental</h3>
             <ul>
                 <li><a href="../property/view_property.php">View Property</a></li>
                 <li><a href="../rental/view_agreement.php">View Rental Agreement</a></li>
