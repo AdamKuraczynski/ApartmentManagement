@@ -10,6 +10,10 @@ if (!isset($_SESSION['user_id']) ||
     exit();
 }
 
+$user_id = $_SESSION['user_id'];
+$is_admin = check_user_role($conn, $user_id, 'administrator');
+$is_owner = check_user_role($conn, $user_id, 'owner');
+
 $message = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -30,6 +34,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 $payment_types_query = "SELECT * FROM PaymentTypes";
 $payment_types_result = $conn->query($payment_types_query);
 
+// Fetch agreements for the dropdown list
+$agreements_query = "
+    SELECT ra.agreement_id, u.username AS tenant_username, p.description AS property_description
+    FROM RentalAgreements ra
+    JOIN Tenants t ON ra.tenant_id = t.tenant_id
+    JOIN Users u ON t.user_id = u.user_id
+    JOIN Properties p ON ra.property_id = p.property_id
+";
+if ($is_owner) {
+    $agreements_query .= " WHERE p.owner_id = '$user_id'";
+}
+$agreements_result = $conn->query($agreements_query);
+
 ?>
 
 <!DOCTYPE html>
@@ -45,11 +62,17 @@ $payment_types_result = $conn->query($payment_types_query);
 <main>
     <h1>Add Payment</h1>
     <?php if ($message): ?>
-        <p><?= $message ?></p>
+        <p><?= htmlspecialchars($message) ?></p>
     <?php endif; ?>
     <form method="post">
         <label for="agreement_id">Agreement ID:</label>
-        <input type="text" id="agreement_id" name="agreement_id" required>
+        <select id="agreement_id" name="agreement_id" required>
+            <?php while ($agreement = $agreements_result->fetch_assoc()): ?>
+                <option value="<?= htmlspecialchars($agreement['agreement_id']) ?>">
+                    <?= htmlspecialchars($agreement['agreement_id'] . ' (' . $agreement['tenant_username'] . ', ' . $agreement['property_description'] . ')') ?>
+                </option>
+            <?php endwhile; ?>
+        </select>
         <br>
         <label for="payment_date">Date:</label>
         <input type="date" id="payment_date" name="payment_date" required>
@@ -60,7 +83,7 @@ $payment_types_result = $conn->query($payment_types_query);
         <label for="payment_type_id">Payment Type:</label>
         <select id="payment_type_id" name="payment_type_id" required>
             <?php while ($row = $payment_types_result->fetch_assoc()): ?>
-                <option value="<?= $row['payment_type_id'] ?>"><?= $row['payment_type_name'] ?></option>
+                <option value="<?= htmlspecialchars($row['payment_type_id']) ?>"><?= htmlspecialchars($row['payment_type_name']) ?></option>
             <?php endwhile; ?>
         </select>
         <br>
@@ -70,13 +93,11 @@ $payment_types_result = $conn->query($payment_types_query);
         $back_link = '/apartmentmanagement/index.php';
         if ($is_admin) {
             $back_link = '/apartmentmanagement/dashboards/administrator_dashboard.php';
-        } elseif ($is_tenant) {
-            $back_link = '/apartmentmanagement/dashboards/tenant_dashboard.php';
         } elseif ($is_owner) {
             $back_link = '/apartmentmanagement/dashboards/owner_dashboard.php';
         }
     ?>
-    <a class="back-button" href="<?php echo $back_link; ?>">Go back</a>
+    <a class="back-button" href="<?= htmlspecialchars($back_link) ?>">Go back</a>
 </main>
 <?php include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/footer.php'); ?>
 </body>

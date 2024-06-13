@@ -92,11 +92,11 @@ if ($result->num_rows === 0) {
     <?php 
         $back_link = '/apartmentmanagement/index.php';
         if ($is_admin) {
-            $back_link = '/apartmentmanagement/dashboards/administrator_dashboard.php';
+            $back_link = '/apartmentmanagement/payments/view_payment.php';
         } elseif ($is_tenant) {
-            $back_link = '/apartmentmanagement/dashboards/tenant_dashboard.php';
+            $back_link = '/apartmentmanagement/payments/view_payment.php';
         } elseif ($is_owner) {
-            $back_link = '/apartmentmanagement/dashboards/owner_dashboard.php';
+            $back_link = '/apartmentmanagement/payments/view_payment.php';
         }
     ?>
     <a class="back-button" href="<?php echo $back_link; ?>">Go back</a>
