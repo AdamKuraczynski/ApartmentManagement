@@ -45,7 +45,6 @@ if (!isset($_SESSION['user_id']) || !check_user_role($conn, $_SESSION['user_id']
             <h3> Manage payments</h3>
             <ul>
                 <li><a href="../payments/add_payment.php">Add Payment</a></li>
-                <li><a href="../payments/edit_payment.php">Edit Payment</a></li>
                 <li><a href="../payments/view_payment.php">View Payment</a></li>
             </ul> 
        

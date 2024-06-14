@@ -128,9 +128,11 @@ $payment_types_result = $conn->query($payment_types_query);
     <?php 
         $back_link = '/apartmentmanagement/index.php';
         if ($is_admin) {
-            $back_link = '/apartmentmanagement/dashboards/administrator_dashboard.php';
+            $back_link = '/apartmentmanagement/payments/view_payment.php';
+        } elseif ($is_tenant) {
+            $back_link = '/apartmentmanagement/payments/view_payment.php';
         } elseif ($is_owner) {
-            $back_link = '/apartmentmanagement/dashboards/owner_dashboard.php';
+            $back_link = '/apartmentmanagement/payments/view_payment.php';
         }
     ?>
     <a class="back-button" href="<?= htmlspecialchars($back_link); ?>">Go back</a>
