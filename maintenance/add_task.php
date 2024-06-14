@@ -10,22 +10,40 @@ if (!isset($_SESSION['user_id']) ||
     exit();
 }
 
+$user_id = $_SESSION['user_id'];
+$is_admin = check_user_role($conn, $user_id, 'administrator');
+$is_tenant = check_user_role($conn, $user_id, 'tenant');
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Handle form submission to add maintenance task
     $property_id = $_POST['property_id'];
     $description = $_POST['description'];
-    $cost = $_POST['cost'];
-    $status_id = $_POST['status_id'];
     $reported_by = $_SESSION['user_id'];
     $created_at = date('Y-m-d H:i:s');
+    $status_id = 1; // Default status_id for "Pending"
     
     // SQL query to insert maintenance task
-    $stmt = $conn->prepare("INSERT INTO MaintenanceTasks (property_id, description, cost, status_id, reported_by, created_at) VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("issdis", $property_id, $description, $cost, $status_id, $reported_by, $created_at);
-    $stmt->execute();
-    
-    echo "Maintenance task added successfully.";
+    $stmt = $conn->prepare("INSERT INTO MaintenanceTasks (property_id, description, status_id, reported_by, created_at) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("isiss", $property_id, $description, $status_id, $reported_by, $created_at);
+    if ($stmt->execute()) {
+        echo "Maintenance task added successfully.";
+    } else {
+        echo "Error: " . $stmt->error;
+    }
 }
+
+// Fetch properties for the dropdown list
+$properties_query = "
+    SELECT p.property_id, p.description
+    FROM Properties p
+";
+if ($is_tenant) {
+    $properties_query .= " 
+        JOIN RentalAgreements ra ON p.property_id = ra.property_id 
+        JOIN Tenants t ON ra.tenant_id = t.tenant_id 
+        WHERE t.user_id = '$user_id'";
+}
+$properties_result = $conn->query($properties_query);
 
 ?>
 
@@ -35,17 +53,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Maintenance Task</title>
-    <link rel="stylesheet" type="text/css" href="/Apartmentmanagement/css/styles.css">
+    <link rel="stylesheet" type="text/css" href="/apartmentmanagement/css/styles.css">
 </head>
 <body>
     <?php include('../includes/header.php'); ?>
     <main>
         <h2>Add Maintenance Task</h2>
         <form action="add_task.php" method="post">
-            <input type="text" name="property_id" placeholder="Property ID" required>
-            <textarea name="description" placeholder="Description" required></textarea>
-            <input type="text" name="cost" placeholder="Cost" required>
-            <input type="text" name="status_id" placeholder="Status ID" required>
+            <label for="property_id">Property:</label>
+            <select id="property_id" name="property_id" required>
+                <?php while ($property = $properties_result->fetch_assoc()): ?>
+                    <option value="<?= htmlspecialchars($property['property_id']) ?>">
+                        <?= htmlspecialchars($property['description']) ?>
+                    </option>
+                <?php endwhile; ?>
+            </select>
+            <br>
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" required></textarea>
+            <br>
             <button type="submit">Add Task</button>
         </form>
         <?php 
@@ -58,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $back_link = '/apartmentmanagement/dashboards/owner_dashboard.php';
             }
         ?>
-        <a class="back-button" href="<?php echo $back_link; ?>">Go back</a>
+        <a class="back-button" href="<?= htmlspecialchars($back_link) ?>">Go back</a>
     </main>
     <?php include('../includes/footer.php'); ?>
 </body>
