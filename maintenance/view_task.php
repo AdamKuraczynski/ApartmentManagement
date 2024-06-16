@@ -62,7 +62,11 @@ $result = $stmt->get_result();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Maintenance Tasks</title>
     <link rel="stylesheet" type="text/css" href="/apartmentmanagement/css/styles.css">
+    <link rel="stylesheet" type="text/css" href="/apartmentmanagement/css/styles.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <script src="/apartmentmanagement/js/scripts.js"></script>
     <script>
         $(document).ready(function() {
             $('.mark-as-solved').on('click', function() {
@@ -109,7 +113,7 @@ $result = $stmt->get_result();
     <?php include('../includes/header.php'); ?>
     <main>
         <h2>View Maintenance Tasks</h2>
-        <table>
+        <table id="tasksTable">
             <?php if ($result->num_rows > 0): ?>
                 <thead>
                     <tr>
