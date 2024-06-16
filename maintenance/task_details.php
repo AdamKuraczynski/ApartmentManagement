@@ -22,7 +22,6 @@ $is_admin = check_user_role($conn, $user_id, 'administrator');
 $is_owner = check_user_role($conn, $user_id, 'owner');
 $is_tenant = check_user_role($conn, $user_id, 'tenant');
 
-// Prepare the SQL query based on the user's role
 $stmt = $conn->prepare("
     SELECT mt.task_id, mt.property_id, mt.description, mt.cost, mt.status_id, mt.reported_by, mt.created_at, mt.resolved_at,
            p.owner_id,

@@ -4,7 +4,6 @@ include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/db.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/functions.php');
 
 if ($is_tenant) {
-    // Get the tenant_id for the current user
     $stmt = $conn->prepare("SELECT tenant_id FROM Tenants WHERE user_id = ?");
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
@@ -23,7 +22,6 @@ if ($is_tenant) {
         $stmt->execute();
         $result = $stmt->get_result();
         while ($payment = $result->fetch_assoc()) {
-            // Check if a notification for this payment was created in the last 3 days
             $check_stmt = $conn->prepare("
                 SELECT COUNT(*) 
                 FROM Notifications 
@@ -60,7 +58,6 @@ if ($is_owner) {
     $stmt->execute();
     $result = $stmt->get_result();
     while ($payment = $result->fetch_assoc()) {
-        // Check if a notification for this payment was created in the last 3 days
         $check_stmt = $conn->prepare("
             SELECT COUNT(*) 
             FROM Notifications 
@@ -84,9 +81,7 @@ if ($is_owner) {
     $stmt->close();
 }
 
-// Create notifications for admins about new maintenance tasks or unresolved tasks
 if ($is_admin) {
-    // Notify about new maintenance tasks
     $stmt = $conn->prepare("
         SELECT task_id, description, reported_by, created_at
         FROM MaintenanceTasks
@@ -94,7 +89,6 @@ if ($is_admin) {
     $stmt->execute();
     $result = $stmt->get_result();
     while ($task = $result->fetch_assoc()) {
-        // Check if a notification for this maintenance task was created in the last 3 days
         $check_stmt = $conn->prepare("
             SELECT COUNT(*)
             FROM Notifications
@@ -117,7 +111,6 @@ if ($is_admin) {
     }
     $stmt->close();
 
-    // Notify about unresolved maintenance tasks
     $stmt = $conn->prepare("
         SELECT task_id, description, reported_by, created_at
         FROM MaintenanceTasks
@@ -125,7 +118,6 @@ if ($is_admin) {
     $stmt->execute();
     $result = $stmt->get_result();
     while ($task = $result->fetch_assoc()) {
-        // Check if a notification for this maintenance task was created in the last 3 days
         $check_stmt = $conn->prepare("
             SELECT COUNT(*)
             FROM Notifications
@@ -149,7 +141,6 @@ if ($is_admin) {
     $stmt->close();
 }
 
-// Fetch notifications for the user, ordered by created_at descending
 $stmt = $conn->prepare("SELECT * FROM Notifications WHERE user_id = ? ORDER BY created_at DESC");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();

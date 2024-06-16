@@ -30,11 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// Fetch payment types
 $payment_types_query = "SELECT * FROM PaymentTypes";
 $payment_types_result = $conn->query($payment_types_query);
 
-// Fetch agreements for the dropdown list
 $agreements_query = "
     SELECT ra.agreement_id, u.username AS tenant_username, p.description AS property_description
     FROM RentalAgreements ra

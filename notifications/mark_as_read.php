@@ -7,19 +7,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $notification_id = intval($_POST['notification_id']);
     $user_id = $_SESSION['user_id'];
 
-    // Check if the notification belongs to the user
     $stmt = $conn->prepare("SELECT * FROM Notifications WHERE notification_id = ? AND user_id = ?");
     $stmt->bind_param("ii", $notification_id, $user_id);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
-        // Mark the notification as read
         $stmt_update = $conn->prepare("UPDATE Notifications SET read_at = NOW() WHERE notification_id = ?");
         $stmt_update->bind_param("i", $notification_id);
         $stmt_update->execute();
         
-        // Redirect back to notifications page
         header("Location: view_notifications.php");
         exit();
     } else {

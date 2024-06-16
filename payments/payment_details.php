@@ -22,7 +22,6 @@ $is_admin = check_user_role($conn, $user_id, 'administrator');
 $is_owner = check_user_role($conn, $user_id, 'owner');
 $is_tenant = check_user_role($conn, $user_id, 'tenant');
 
-// Prepare the SQL query to fetch payment details along with agreement and property details
 $query = "
     SELECT p.*, ra.property_id, ra.tenant_id, pr.owner_id, 
            t_user.username AS tenant_username, 
@@ -41,7 +40,6 @@ $stmt->execute();
 $result = $stmt->get_result();
 $payment = $result->fetch_assoc();
 
-// Fetch the tenant_id for the logged-in user if they are a tenant
 if ($is_tenant) {
     $tenant_query = "SELECT tenant_id FROM Tenants WHERE user_id = ?";
     $tenant_stmt = $conn->prepare($tenant_query);
@@ -54,11 +52,9 @@ if ($is_tenant) {
     $tenant_id = null;
 }
 
-// Debugging output
 echo "<!-- is_admin: $is_admin, is_owner: $is_owner, is_tenant: $is_tenant -->";
 echo "<!-- payment_owner_id: " . htmlspecialchars($payment['owner_id']) . ", payment_tenant_id: " . htmlspecialchars($payment['tenant_id']) . ", user_id: $user_id, tenant_id: $tenant_id -->";
 
-// Validate access
 if (!$payment || ($is_owner && $payment['owner_id'] != $user_id) || ($is_tenant && $payment['tenant_id'] != $tenant_id)) {
     echo "Access denied.";
     exit();
@@ -85,8 +81,8 @@ if (!$payment || ($is_owner && $payment['owner_id'] != $user_id) || ($is_tenant 
         <p><strong>Date: </strong><?= htmlspecialchars($payment['payment_date']) ?></p>
         <p><strong>Amount: </strong><?= htmlspecialchars($payment['amount']) ?></p>
         <p><strong>Payment Type: </strong><?= htmlspecialchars($payment['payment_type_id']) ?></p>
-        <p><strong>Payer: </strong><?= htmlspecialchars($payment['tenant_username']) ?></p> <!-- Dodany payer -->
-        <p><strong>Payee: </strong><?= htmlspecialchars($payment['owner_username']) ?></p> <!-- Dodany payee -->
+        <p><strong>Payer: </strong><?= htmlspecialchars($payment['tenant_username']) ?></p>
+        <p><strong>Payee: </strong><?= htmlspecialchars($payment['owner_username']) ?></p>
     </div>
 </div>
 

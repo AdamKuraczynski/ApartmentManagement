@@ -3,7 +3,6 @@ include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/auth.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/db.php'); 
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/functions.php'); 
 
-// Check if user is logged in and has the appropriate role
 if (!isset($_SESSION['user_id']) || 
     !(check_user_role($conn, $_SESSION['user_id'], 'administrator') || 
       check_user_role($conn, $_SESSION['user_id'], 'tenant'))) {
@@ -13,7 +12,6 @@ if (!isset($_SESSION['user_id']) ||
 
 $message = '';
 
-// Check if task ID is provided either via GET or POST
 $task_id = isset($_GET['task_id']) ? $_GET['task_id'] : (isset($_POST['task_id']) ? $_POST['task_id'] : null);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $task_id) {
@@ -34,7 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $task_id) {
     if ($stmt->execute()) {
         $message = "Successfully updated maintenance task.";
 
-        // Fetch updated task data
         $query = "SELECT * FROM MaintenanceTasks WHERE task_id = ?";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("i", $task_id);
@@ -53,11 +50,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $task_id) {
     $task = $result->fetch_assoc();
 
     if (!$task) {
-        $task_id = null; // Reset task_id if not found
+        $task_id = null;
     }
 }
 
-// Fetch properties and statuses
 $properties_query = "SELECT property_id, description FROM Properties";
 $properties_result = $conn->query($properties_query);
 

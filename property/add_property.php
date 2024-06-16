@@ -3,7 +3,6 @@ include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/auth.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/db.php'); 
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/functions.php'); 
 
-// Check if the user is logged in and has the correct role (administrator or owner)
 if (!isset($_SESSION['user_id']) || 
     !(check_user_role($conn, $_SESSION['user_id'], 'administrator') || 
       check_user_role($conn, $_SESSION['user_id'], 'owner'))) {
@@ -32,13 +31,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $rental_price = sanitize_input($_POST["rental_price"]);
     $description = sanitize_input($_POST["description"]);
 
-    // Insert address into the database
     $stmt = $conn->prepare("INSERT INTO Addresses (street, city, state, postal_code, country) VALUES (?, ?, ?, ?, ?)");
     $stmt->bind_param("sssss", $street, $city, $state, $postal_code, $country);
     if ($stmt->execute()) {
         $address_id = $stmt->insert_id;
 
-        // Insert property into the database
         $stmt = $conn->prepare("INSERT INTO Properties (owner_id, address_id, type_id, number_of_rooms, size, rental_price, description) VALUES (?, ?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("iiidsss", $owner_id, $address_id, $type_id, $number_of_rooms, $size, $rental_price, $description);
         if ($stmt->execute()) {

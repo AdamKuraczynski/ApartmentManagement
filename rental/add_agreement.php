@@ -15,7 +15,6 @@ $is_admin = check_user_role($conn, $user_id, 'administrator');
 $is_owner = check_user_role($conn, $user_id, 'owner');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Handle form submission to add rental agreement
     $property_id = $_POST['property_id'];
     $tenant_id = $_POST['tenant_id'];
     $start_date = $_POST['start_date'];
@@ -23,7 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $rent_amount = $_POST['rent_amount'];
     $security_deposit = $_POST['security_deposit'];
     
-    // SQL query to insert rental agreement
     $stmt = $conn->prepare("INSERT INTO RentalAgreements (property_id, tenant_id, start_date, end_date, rent_amount, security_deposit) VALUES (?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("iissdd", $property_id, $tenant_id, $start_date, $end_date, $rent_amount, $security_deposit);
     $stmt->execute();
@@ -31,7 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     echo "Rental agreement added successfully.";
 }
 
-// Fetch properties for the dropdown list
 if ($is_admin) {
     $properties_query = "SELECT property_id, description FROM Properties";
 } else if ($is_owner) {
@@ -45,7 +42,6 @@ if ($is_owner) {
 $properties_stmt->execute();
 $properties_result = $properties_stmt->get_result();
 
-// Fetch tenants for the dropdown list
 $tenants_query = "
     SELECT t.tenant_id, u.username 
     FROM Tenants t 

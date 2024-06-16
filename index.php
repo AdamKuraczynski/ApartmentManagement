@@ -242,7 +242,6 @@ $next_payment_date = $is_tenant ? get_next_payment_date($conn, $user_id) : null;
                     }
                 });
 
-                // Countdown Timer
                 const nextPaymentDate = new Date("<?php echo $next_payment_date; ?>").getTime();
                 const countdownElement = document.getElementById('countdown');
 

@@ -22,7 +22,6 @@ $is_admin = check_user_role($conn, $user_id, 'administrator');
 $is_owner = check_user_role($conn, $user_id, 'owner');
 $is_tenant = check_user_role($conn, $user_id, 'tenant');
 
-// Prepare the SQL query based on the user's role
 $stmt = $conn->prepare("
     SELECT p.property_id, p.owner_id, p.address_id, p.type_id, p.number_of_rooms, p.size, p.rental_price, p.description,
            a.street, a.city, a.state, a.postal_code, a.country,
@@ -105,4 +104,3 @@ if (!$property) {
     <?php include('../includes/footer.php'); ?>
 </body>
 </html>
-

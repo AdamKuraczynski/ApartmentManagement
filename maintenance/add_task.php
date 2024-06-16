@@ -15,14 +15,12 @@ $is_admin = check_user_role($conn, $user_id, 'administrator');
 $is_tenant = check_user_role($conn, $user_id, 'tenant');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Handle form submission to add maintenance task
     $property_id = $_POST['property_id'];
     $description = $_POST['description'];
     $reported_by = $_SESSION['user_id'];
     $created_at = date('Y-m-d H:i:s');
-    $status_id = 1; // Default status_id for "Pending"
+    $status_id = 1;
     
-    // SQL query to insert maintenance task
     $stmt = $conn->prepare("INSERT INTO MaintenanceTasks (property_id, description, status_id, reported_by, created_at) VALUES (?, ?, ?, ?, ?)");
     $stmt->bind_param("isiss", $property_id, $description, $status_id, $reported_by, $created_at);
     if ($stmt->execute()) {
@@ -32,7 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// Fetch properties for the dropdown list
 $properties_query = "
     SELECT p.property_id, p.description
     FROM Properties p

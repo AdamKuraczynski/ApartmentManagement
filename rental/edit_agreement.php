@@ -3,15 +3,12 @@ include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/auth.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/db.php'); 
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/functions.php'); 
 
-// Check if user is logged in and has the appropriate role
 if (!isset($_SESSION['user_id']) || !(check_user_role($conn, $_SESSION['user_id'], 'administrator') || check_user_role($conn, $_SESSION['user_id'], 'owner'))) {
     header("Location: /apartmentmanagement/index.php");
     exit();
 }
 
 $message = '';
-
-// Check if agreement ID is provided either via GET or POST
 $agreement_id = isset($_GET['agreement_id']) ? $_GET['agreement_id'] : (isset($_POST['agreement_id']) ? $_POST['agreement_id'] : null);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $agreement_id) {
@@ -28,7 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $agreement_id) {
     if ($stmt->execute()) {
         $message = "Successfully updated rental agreement.";
 
-        // Fetch updated agreement data
         $query = "SELECT * FROM RentalAgreements WHERE agreement_id = ?";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("i", $agreement_id);
@@ -47,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $agreement_id) {
     $agreement = $result->fetch_assoc();
 
     if (!$agreement) {
-        $agreement_id = null; // Reset agreement_id if not found
+        $agreement_id = null;
     }
 }
 
@@ -55,7 +51,6 @@ $user_id = $_SESSION['user_id'];
 $is_admin = check_user_role($conn, $user_id, 'administrator');
 $is_owner = check_user_role($conn, $user_id, 'owner');
 
-// Fetch properties and tenants
 $properties_query = $is_admin ? "SELECT property_id, description FROM Properties" : "SELECT property_id, description FROM Properties WHERE owner_id = $user_id";
 $properties_result = $conn->query($properties_query);
 

@@ -16,7 +16,6 @@ $is_admin = check_user_role($conn, $user_id, 'administrator');
 $is_owner = check_user_role($conn, $user_id, 'owner');
 $is_tenant = check_user_role($conn, $user_id, 'tenant');
 
-// Prepare the SQL query based on the user's role
 if ($is_admin) {
     $stmt = $conn->prepare("
         SELECT ra.agreement_id, ra.property_id, ra.start_date, ra.end_date, ra.rent_amount, 

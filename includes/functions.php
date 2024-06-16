@@ -47,4 +47,3 @@ function is_owner_of_property($conn, $user_id, $property_id) {
 }
 
 ?>
-

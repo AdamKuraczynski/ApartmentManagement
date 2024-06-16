@@ -3,7 +3,6 @@ include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/auth.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/db.php'); 
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/functions.php'); 
 
-// Fetch document details
 $stmt = $conn->prepare("SELECT document_id, property_id, agreement_id, documents.document_type_id, file_path, uploaded_at, document_type_name 
                         FROM documents 
                         JOIN documenttypes ON documents.document_type_id = documenttypes.document_type_id;");

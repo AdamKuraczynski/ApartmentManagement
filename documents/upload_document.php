@@ -13,7 +13,6 @@ if (!isset($_SESSION['user_id']) ||
 $message = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Handle file upload
     $property_id = $_POST['property_id'];
     $agreement_id = $_POST['agreement_id'];
     $document_type_id = $_POST['document_type_id'];
@@ -21,7 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     $file_path = '../uploads/' . basename($_FILES['file']['name']);
     if (move_uploaded_file($_FILES['file']['tmp_name'], $file_path)) {
-        // SQL query to insert document
         $stmt = $conn->prepare("INSERT INTO Documents (property_id, agreement_id, document_type_id, file_path, uploaded_at) VALUES (?, ?, ?, ?, ?)");
         $stmt->bind_param("iiiss", $property_id, $agreement_id, $document_type_id, $file_path, $uploaded_at);
         $stmt->execute();

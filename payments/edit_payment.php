@@ -3,15 +3,12 @@ include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/auth.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/db.php'); 
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/functions.php'); 
 
-// Check if user is logged in and has the appropriate role
 if (!isset($_SESSION['user_id']) || !(check_user_role($conn, $_SESSION['user_id'], 'administrator') || check_user_role($conn, $_SESSION['user_id'], 'owner'))) {
     header("Location: /apartmentmanagement/index.php");
     exit();
 }
 
 $message = '';
-
-// Check if payment ID is provided either via GET or POST
 $payment_id = isset($_GET['id']) ? $_GET['id'] : (isset($_POST['payment_id']) ? $_POST['payment_id'] : null);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $payment_id) {
@@ -25,7 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $payment_id) {
     if ($stmt->execute()) {
         $message = "Successfully updated payment.";
 
-        // Fetch updated payment data
         $query = "
             SELECT p.*, ra.property_id, pr.owner_id 
             FROM Payments p 
@@ -56,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $payment_id) {
     $payment = $result->fetch_assoc();
 
     if (!$payment) {
-        $payment_id = null; // Reset payment_id if not found
+        $payment_id = null;
     }
 }
 
@@ -69,7 +65,7 @@ if ($payment_id && $is_owner && $payment && $payment['owner_id'] != $user_id) {
     exit();
 }
 
-// Fetch payment types
+
 $payment_types_query = "SELECT * FROM PaymentTypes";
 $payment_types_result = $conn->query($payment_types_query);
 ?>

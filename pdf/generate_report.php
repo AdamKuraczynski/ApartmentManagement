@@ -38,7 +38,6 @@ class PDF extends FPDF {
 $pdf = new PDF();
 $pdf->SetTitle('Property Management Report');
 
-// Fetch and add Properties
 $sql_properties = "SELECT * FROM Properties";
 $result_properties = $conn->query($sql_properties);
 $body_properties = "";
@@ -59,7 +58,6 @@ if ($result_properties->num_rows > 0) {
 }
 $pdf->AddChapter(1, 'Properties', $body_properties);
 
-// Fetch and add Rental Agreements
 $sql_agreements = "SELECT * FROM RentalAgreements";
 $result_agreements = $conn->query($sql_agreements);
 $body_agreements = "";
@@ -79,7 +77,6 @@ if ($result_agreements->num_rows > 0) {
 }
 $pdf->AddChapter(2, 'Rental Agreements', $body_agreements);
 
-// Fetch and add Maintenance Tasks
 $sql_tasks = "SELECT * FROM MaintenanceTasks";
 $result_tasks = $conn->query($sql_tasks);
 $body_tasks = "";
@@ -100,7 +97,6 @@ if ($result_tasks->num_rows > 0) {
 }
 $pdf->AddChapter(3, 'Maintenance Tasks', $body_tasks);
 
-// Fetch and add Users
 $sql_users = "SELECT * FROM Users";
 $result_users = $conn->query($sql_users);
 $body_users = "";
@@ -116,6 +112,5 @@ if ($result_users->num_rows > 0) {
 }
 $pdf->AddChapter(4, 'Users', $body_users);
 
-// Output PDF
 $pdf->Output();
 ?>

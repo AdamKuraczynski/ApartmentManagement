@@ -11,8 +11,6 @@ if (!isset($_SESSION['user_id']) ||
 }
 
 $message = '';
-
-// Check if property ID is provided either via GET or POST
 $property_id = isset($_GET['id']) ? $_GET['id'] : (isset($_POST['property_id']) ? $_POST['property_id'] : null);
 
 if ($property_id) {
@@ -56,7 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $property_id) {
         $owner_id = sanitize_input($_POST['owner_id']);
     }
 
-    // Check if address already exists
     $check_address_query = "SELECT address_id FROM Addresses WHERE street = ? AND city = ? AND postal_code = ? AND country = ?";
     $stmt = $conn->prepare($check_address_query);
     $stmt->bind_param("ssss", $street, $city, $postal_code, $country);
@@ -104,11 +101,9 @@ if ($property_id && $is_owner && !is_owner_of_property($conn, $user_id, $propert
     exit();
 }
 
-// Fetch property types
 $property_types_query = "SELECT * FROM PropertyTypes";
 $property_types_result = $conn->query($property_types_query);
 
-// Fetch owners for admin
 if ($is_admin) {
     $owners_query = "SELECT u.user_id, u.username FROM Users u JOIN Owners o ON u.user_id = o.user_id";
     $owners_result = $conn->query($owners_query);
