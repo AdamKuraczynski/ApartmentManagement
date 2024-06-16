@@ -16,7 +16,7 @@ function sendResetEmail($toEmail, $resetLink) {
         $mail->Port       = 1025;
 
 
-        $mail->setFrom('nicoxam929@fresec.com', 'Mailer');
+        $mail->setFrom('ak301824@student.polsl.pl', 'Mailer');
         $mail->addAddress($toEmail);
 
         $mail->isHTML(true);

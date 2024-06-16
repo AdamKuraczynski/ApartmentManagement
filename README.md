@@ -22,4 +22,3 @@ ApartmentManagement is a web-based application designed to simplify the manageme
 ## To do:
 
 - verify functionality of all functions for all users
-- edit sample data sql with more data
