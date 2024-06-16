@@ -392,3 +392,16 @@ canvas {
     font-weight: bold;
     color: red;
 }
+
+#popup {
+    position: fixed;
+    width: 20%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: 1px solid black;
+    z-index: 1000;
+    text-align: center;
+}

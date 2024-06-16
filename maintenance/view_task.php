@@ -62,52 +62,50 @@ $result = $stmt->get_result();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Maintenance Tasks</title>
     <link rel="stylesheet" type="text/css" href="/apartmentmanagement/css/styles.css">
-    <link rel="stylesheet" type="text/css" href="/apartmentmanagement/css/styles.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
     <script src="/apartmentmanagement/js/scripts.js"></script>
     <script>
         $(document).ready(function() {
-            $('.mark-as-solved').on('click', function() {
-                var taskId = $(this).data('task-id');
-                var isOwner = $(this).data('is-owner');
-                var popupHtml = '<div id="popup">' +
-                                '<p>Mark task as solved?</p>' +
-                                (isOwner ? '<label for="cost">Cost:</label><input type="text" id="cost">' : '') +
-                                '<button id="confirm">Confirm</button>' +
-                                '<button id="cancel">Cancel</button>' +
-                                '</div>';
-                $('body').append(popupHtml);
-                $('#confirm').on('click', function() {
-                    var cost = isOwner ? $('#cost').val() : null;
-                    $.ajax({
-                        url: '/apartmentmanagement/maintenance/mark_as_solved.php',
-                        method: 'POST',
-                        data: { task_id: taskId, cost: cost },
-                        success: function(response) {
-                            location.reload();
-                        }
-                    });
-                });
-                $('#cancel').on('click', function() {
-                    $('#popup').remove();
-                });
+    $('.mark-as-solved, .change-status').on('click', function() {
+        var taskId = $(this).data('task-id');
+        var currentStatus = $(this).data('status-id');
+        var isOwner = $(this).data('is-owner');
+        var popupHtml = '<div id="popup">' +
+                        '<div><label for="status">Change Status:</label></div>' +
+                        '<div><select id="status">';
+        if (currentStatus == 1) {
+            popupHtml += '<option value="2">In Progress</option><option value="3">Completed</option>';
+        } else if (currentStatus == 2) {
+            popupHtml += '<option value="3">Completed</option>';
+        }
+        popupHtml += '</select></div>' +
+                     (isOwner || <?php echo $is_admin ? 'true' : 'false'; ?> ? 
+                     '<div><label for="cost">Cost:</label></div>' +
+                     '<div><input type="text" id="cost"></div>' : '') +
+                     '<div><button id="confirm">Confirm</button>' +
+                     '<button id="cancel">Cancel</button></div>' +
+                     '</div>';
+        $('body').append(popupHtml);
+        $('#confirm').on('click', function() {
+            var newStatus = $('#status').val();
+            var cost = isOwner || <?php echo $is_admin ? 'true' : 'false'; ?> ? $('#cost').val() : null;
+            $.ajax({
+                url: '/apartmentmanagement/maintenance/change_task_status.php',
+                method: 'POST',
+                data: { task_id: taskId, status_id: newStatus, cost: cost },
+                success: function(response) {
+                    location.reload();
+                }
             });
         });
+        $('#cancel').on('click', function() {
+            $('#popup').remove();
+        });
+    });
+});
     </script>
-    <style>
-        #popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 20px;
-            border: 1px solid black;
-            z-index: 1000;
-        }
-    </style>
 </head>
 <body>
     <?php include('../includes/header.php'); ?>
@@ -149,11 +147,13 @@ $result = $stmt->get_result();
                         <td><?php echo htmlspecialchars($row['resolved_at']); ?></td>
                         <td>
                             <a href="/apartmentmanagement/maintenance/task_details.php?task_id=<?php echo htmlspecialchars($row['task_id']); ?>">Details</a>
-                            <?php if ($is_admin || $is_tenant): ?>
+                            <?php if ($is_tenant && in_array($row['status_id'], [1, 2])): ?>
                                 <a href="edit_task.php?task_id=<?= htmlspecialchars($row['task_id']) ?>">Edit</a>
                             <?php endif; ?>
-                            <?php if (in_array($row['status_id'], [1, 2])): ?>
-                                <a href="#" class="mark-as-solved" data-task-id="<?= htmlspecialchars($row['task_id']) ?>" data-is-owner="<?= $is_owner ?>">Mark as Solved</a>
+                            <?php if ($is_tenant && in_array($row['status_id'], [1, 2])): ?>
+                                <a href="#" class="mark-as-solved" data-task-id="<?= htmlspecialchars($row['task_id']) ?>" data-status-id="<?= $row['status_id'] ?>">Mark as Solved</a>
+                            <?php elseif (($is_admin || $is_owner) && in_array($row['status_id'], [1, 2])): ?>
+                                <a href="#" class="change-status" data-task-id="<?= htmlspecialchars($row['task_id']) ?>" data-status-id="<?= $row['status_id'] ?>" data-is-owner="<?= $is_owner ?>">Change Status</a>
                             <?php endif; ?>
                         </td>
                     </tr>
