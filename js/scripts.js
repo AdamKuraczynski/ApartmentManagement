@@ -21,3 +21,11 @@ function handleFileClick(event, filePath) {
         }
     });
 }
+
+function initializeDataTables() {
+    $('#tasksTable').DataTable();
+}
+
+$(document).ready(function() {
+    initializeDataTables();
+});
