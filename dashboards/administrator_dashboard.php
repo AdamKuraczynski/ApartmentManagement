@@ -65,7 +65,8 @@ if (!isset($_SESSION['user_id']) || !check_user_role($conn, $_SESSION['user_id']
 
             <h3> Manage users </h3>
             <ul>
-                <li><a href="../roles/modify_roles.php">Modify Roles</a></li>
+                <li><a href="../users/modify_roles.php">Modify Roles</a></li>
+                <li><a href="../users/view_user.php">View Users</a></li>
             </ul>
         </div>
     </main>
