@@ -73,8 +73,8 @@ $result = $stmt->get_result();
         var currentStatus = $(this).data('status-id');
         var isOwner = $(this).data('is-owner');
         var popupHtml = '<div id="popup">' +
-                        '<div><label for="status">Change Status:</label></div>' +
-                        '<div><select id="status">';
+                        '<div><label for="status">Change Status:</label>' +
+                        '<select id="status">';
         if (currentStatus == 1) {
             popupHtml += '<option value="2">In Progress</option><option value="3">Completed</option>';
         } else if (currentStatus == 2) {
@@ -82,9 +82,9 @@ $result = $stmt->get_result();
         }
         popupHtml += '</select></div>' +
                      (isOwner || <?php echo $is_admin ? 'true' : 'false'; ?> ? 
-                     '<div><label for="cost">Cost:</label></div>' +
-                     '<div><input type="text" id="cost"></div>' : '') +
-                     '<div><button id="confirm">Confirm</button>' +
+                     '<div><br><label for="cost">Cost:</label>' +
+                     '<input type="text" id="cost"></div>' : '') +
+                     '<div id="Popupbuttons"><br><button id="confirm">Confirm</button>' +
                      '<button id="cancel">Cancel</button></div>' +
                      '</div>';
         $('body').append(popupHtml);

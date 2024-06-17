@@ -395,9 +395,10 @@ canvas {
 
 #popup {
     position: fixed;
-    width: 20%;
     top: 50%;
     left: 50%;
+    margin-top: -150px;
+    margin-top: -100px;
     transform: translate(-50%, -50%);
     background-color: white;
     padding: 20px;
@@ -405,3 +406,4 @@ canvas {
     z-index: 1000;
     text-align: center;
 }
+

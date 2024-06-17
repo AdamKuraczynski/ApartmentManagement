@@ -38,7 +38,6 @@ if (!isset($_SESSION['user_id']) || !check_user_role($conn, $_SESSION['user_id']
             <h3> Manage maintenance tasks </h3>
             <ul>
                 <li><a href="../maintenance/add_task.php">Add Maintenance Task</a></li>
-                <li><a href="../maintenance/edit_task.php">Edit Maintenance Task</a></li>
                 <li><a href="../maintenance/view_task.php">View Maintenance Task</a></li>
             </ul> 
             
