@@ -63,8 +63,8 @@ if (!$agreement) {
     <?php include('../includes/header.php'); ?>
     <main>
         <h2>Agreement Details</h2>
-        <div class="property-detail">
-            <div class="property-section">
+        <div class="show-details">
+            <div class="details-section">
                 <h3>General Information</h3>
                 <p><strong>Agreement ID:</strong> <?php echo htmlspecialchars($agreement['agreement_id']); ?></p>
                 <p><strong>Property ID:</strong> <?php echo htmlspecialchars($agreement['property_id']); ?></p>
@@ -75,14 +75,14 @@ if (!$agreement) {
                 <p><strong>Rent Amount:</strong> $<?php echo htmlspecialchars($agreement['rent_amount']); ?></p>
                 <p><strong>Security Deposit:</strong> $<?php echo htmlspecialchars($agreement['security_deposit']); ?></p>
             </div>
-            <div class="property-section">
+            <div class="details-section">
                 <h3>Tenant Information</h3>
                 <p><strong>Username:</strong> <?php echo htmlspecialchars($agreement['tenant_username']); ?></p>
                 <p><strong>First Name:</strong> <?php echo htmlspecialchars($agreement['tenant_first_name']); ?></p>
                 <p><strong>Last Name:</strong> <?php echo htmlspecialchars($agreement['tenant_last_name']); ?></p>
                 <p><strong>Email:</strong> <?php echo htmlspecialchars($agreement['tenant_email']); ?></p>
             </div>
-            <div class="property-section">
+            <div class="details-section">
                 <h3>Owner Information</h3>
                 <p><strong>Username:</strong> <?php echo htmlspecialchars($agreement['owner_username']); ?></p>
                 <p><strong>First Name:</strong> <?php echo htmlspecialchars($agreement['owner_first_name']); ?></p>

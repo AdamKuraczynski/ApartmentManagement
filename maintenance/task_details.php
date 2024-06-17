@@ -65,8 +65,8 @@ if (!$task) {
     <?php include('../includes/header.php'); ?>
     <main>
         <h2>Maintenance Task Details</h2>
-        <div class="property-detail">
-            <div class="property-section">
+        <div class="show-details">
+            <div class="details-section">
                 <h3>General Information</h3>
                 <p><strong>Task ID:</strong> <?php echo htmlspecialchars($task['task_id']); ?></p>
                 <p><strong>Property ID:</strong> <?php echo htmlspecialchars($task['property_id']); ?></p>
@@ -77,7 +77,7 @@ if (!$task) {
                 <p><strong>Created At:</strong> <?php echo htmlspecialchars($task['created_at']); ?></p>
                 <p><strong>Resolved At:</strong> <?php echo htmlspecialchars($task['resolved_at']); ?></p>
             </div>
-            <div class="property-section">
+            <div class="details-section">
                 <h3>Property Address</h3>
                 <p><strong>Street:</strong> <?php echo htmlspecialchars($task['street']); ?></p>
                 <p><strong>City:</strong> <?php echo htmlspecialchars($task['city']); ?></p>
@@ -85,7 +85,7 @@ if (!$task) {
                 <p><strong>Postal Code:</strong> <?php echo htmlspecialchars($task['postal_code']); ?></p>
                 <p><strong>Country:</strong> <?php echo htmlspecialchars($task['country']); ?></p>
             </div>
-            <div class="property-section">
+            <div class="details-section">
                 <h3>Owner Information</h3>
                 <p><strong>Username:</strong> <?php echo htmlspecialchars($task['owner_username']); ?></p>
                 <p><strong>First Name:</strong> <?php echo htmlspecialchars($task['owner_first_name']); ?></p>

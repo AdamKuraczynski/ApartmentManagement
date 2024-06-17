@@ -72,8 +72,8 @@ if (!$payment || ($is_owner && $payment['owner_id'] != $user_id) || ($is_tenant 
 <body>
 <?php include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/header.php'); ?>
 <main>
-<div class="property-detail">
-    <div class="property-section">
+<div class="show-details">
+    <div class="details-section">
         <h1>Payment Details</h1>
         <p><strong>ID: </strong><?= htmlspecialchars($payment['payment_id']) ?></p>
         <p><strong>Agreement ID: </strong><?= htmlspecialchars($payment['agreement_id']) ?></p>

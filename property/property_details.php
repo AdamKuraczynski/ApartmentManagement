@@ -59,8 +59,8 @@ if (!$property) {
     <?php include('../includes/header.php'); ?>
     <main>
         <h2>Property Details</h2>
-        <div class="property-detail">
-            <div class="property-section">
+        <div class="show-details">
+            <div class="details-section">
                 <h3>General Information</h3>
                 <p><strong>Property ID:</strong> <?php echo htmlspecialchars($property['property_id']); ?></p>
                 <p><strong>Owner:</strong> <?php echo htmlspecialchars($property['owner_username']); ?></p>
@@ -69,7 +69,7 @@ if (!$property) {
                 <p><strong>Size:</strong> <?php echo htmlspecialchars($property['size']); ?> sqm</p>
                 <p><strong>Rental Price:</strong> $<?php echo htmlspecialchars($property['rental_price']); ?></p>
             </div>
-            <div class="property-section">
+            <div class="details-section">
                 <h3>Address</h3>
                 <p><strong>Street:</strong> <?php echo htmlspecialchars($property['street']); ?></p>
                 <p><strong>City:</strong> <?php echo htmlspecialchars($property['city']); ?></p>
@@ -77,11 +77,11 @@ if (!$property) {
                 <p><strong>Postal Code:</strong> <?php echo htmlspecialchars($property['postal_code']); ?></p>
                 <p><strong>Country:</strong> <?php echo htmlspecialchars($property['country']); ?></p>
             </div>
-            <div class="property-section">
+            <div class="details-section">
                 <h3>Description</h3>
                 <p><strong>Description:</strong> <?php echo nl2br(htmlspecialchars($property['description'])); ?></p>
             </div>
-            <div class="property-section">
+            <div class="details-section">
                 <h3>Owner Information</h3>
                 <p><strong>Username:</strong> <?php echo htmlspecialchars($property['owner_username']); ?></p>
                 <p><strong>First Name:</strong> <?php echo htmlspecialchars($property['owner_first_name']); ?></p>

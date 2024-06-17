@@ -3,9 +3,10 @@ include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/auth.php');
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/db.php'); 
 include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/functions.php'); 
 
-$stmt = $conn->prepare("SELECT document_id, property_id, agreement_id, documents.document_type_id, file_path, uploaded_at, document_type_name 
-                        FROM documents 
-                        JOIN documenttypes ON documents.document_type_id = documenttypes.document_type_id;");
+$stmt = $conn->prepare("SELECT d.document_id, p.description AS property_description, d.agreement_id, d.file_path, d.uploaded_at, dt.document_type_name 
+                        FROM documents d
+                        JOIN properties p ON d.property_id = p.property_id
+                        JOIN documenttypes dt ON d.document_type_id = dt.document_type_id;");
 $stmt->execute();
 $result = $stmt->get_result();
 ?>
@@ -30,12 +31,11 @@ $result = $stmt->get_result();
         <?php if ($result->num_rows > 0): ?>
             <thead>
                 <tr>
-                    <th>document_id</th>
-                    <th>property_id</th>
-                    <th>agreement_id</th>
-                    <th>document_type_id</th>
-                    <th>uploaded_at</th>
-                    <th>document_type_name</th>
+                    <th>Document ID</th>
+                    <th>Property</th>
+                    <th>Agreement ID</th>
+                    <th>Uploaded At</th>
+                    <th>Document Type</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -43,9 +43,8 @@ $result = $stmt->get_result();
                 <?php while ($row = $result->fetch_assoc()): ?>
                     <tr>
                         <td><?php echo htmlspecialchars($row['document_id']); ?></td>
-                        <td><?php echo htmlspecialchars($row['property_id']); ?></td>
+                        <td><?php echo htmlspecialchars($row['property_description']); ?></td>
                         <td><?php echo htmlspecialchars($row['agreement_id']); ?></td>
-                        <td><?php echo htmlspecialchars($row['document_type_id']); ?></td>
                         <td><?php echo htmlspecialchars($row['uploaded_at']); ?></td>
                         <td><?php echo htmlspecialchars($row['document_type_name']); ?></td>
                         <td><a href="#" onclick="handleFileClick(event, '../uploads/<?php echo htmlspecialchars($row['file_path']); ?>')">Open</a></td>
@@ -54,7 +53,7 @@ $result = $stmt->get_result();
             </tbody>
             <?php else: ?>
                 <tr>
-                    <td colspan="7">You don't have documents at the moment.</td>
+                    <td colspan="6">You don't have documents at the moment.</td>
                 </tr>
             <?php endif; ?>
         </table>
@@ -68,7 +67,7 @@ $result = $stmt->get_result();
                 $back_link = '/apartmentmanagement/dashboards/owner_dashboard.php';
             }
         ?>
-        <a class="back-button" href="<?php echo $back_link; ?>">Go back</a>    
+        <a class="back-button" href="<?php echo htmlspecialchars($back_link); ?>">Go back</a>    
     </main>
     <?php include('../includes/footer.php'); ?>
 </body>
