@@ -41,6 +41,10 @@ if (!$result) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Users</title>
     <link rel="stylesheet" type="text/css" href="/apartmentmanagement/css/styles.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <script src="/apartmentmanagement/js/scripts.js"></script>
 </head>
 <body>
     <?php include('../includes/header.php'); ?>
@@ -69,7 +73,6 @@ if (!$result) {
                             <a href="user_details.php?id=<?= htmlspecialchars($user['user_id']) ?>">Details</a>
                             <?php if ($user['role'] !== 'Administrator'): ?>
                                 <a href="edit_user.php?id=<?= htmlspecialchars($user['user_id']) ?>">Edit</a>
-                                <a href="delete_user.php?id=<?= htmlspecialchars($user['user_id']) ?>" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
                             <?php endif; ?>
                         </td>
                     </tr>
@@ -79,5 +82,10 @@ if (!$result) {
         <a class="back-button" href="/apartmentmanagement/dashboards/administrator_dashboard.php">Go back</a>
     </main>
     <?php include('../includes/footer.php'); ?>
+    <script>
+        $(document).ready( function () {
+            $('#usersTable').DataTable();
+        });
+    </script>
 </body>
 </html>
