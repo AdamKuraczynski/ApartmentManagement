@@ -141,7 +141,13 @@ if ($is_admin) {
     $stmt->close();
 }
 
-$stmt = $conn->prepare("SELECT * FROM Notifications WHERE user_id = ? ORDER BY created_at DESC");
+// Fetch notifications with the specified order
+$stmt = $conn->prepare("
+    SELECT * 
+    FROM Notifications 
+    WHERE user_id = ? 
+    ORDER BY read_at IS NULL DESC, created_at DESC
+");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
