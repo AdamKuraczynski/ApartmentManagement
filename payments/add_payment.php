@@ -22,11 +22,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $amount = sanitize_input($_POST['amount']);
     $payment_type_id = sanitize_input($_POST['payment_type_id']);
 
-    $insert_query = "INSERT INTO Payments (agreement_id, payment_date, amount, payment_type_id) VALUES ('$agreement_id', '$payment_date', '$amount', '$payment_type_id')";
-    if ($conn->query($insert_query) === TRUE) {
-        $message = "Successfully added payment.";
+    $errors = [];
+
+    // Validate amount (must be a number)
+    if (!preg_match("/^\d+(\.\d{1,2})?$/", $amount)) {
+        $errors[] = "Amount should be a number, optionally with up to 2 decimal places.";
+    }
+
+    if (empty($errors)) {
+        $insert_query = "INSERT INTO Payments (agreement_id, payment_date, amount, payment_type_id) VALUES ('$agreement_id', '$payment_date', '$amount', '$payment_type_id')";
+        if ($conn->query($insert_query) === TRUE) {
+            $message = "Successfully added payment.";
+        } else {
+            $message = "Error: " . $conn->error;
+        }
     } else {
-        $message = "Error: " . $conn->error;
+        $message = implode("<br>", $errors);
     }
 }
 
@@ -54,6 +65,19 @@ $agreements_result = $conn->query($agreements_query);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Payment</title>
     <link rel="stylesheet" type="text/css" href="/apartmentmanagement/css/styles.css">
+    <script>
+        function validateForm() {
+            const amount = document.getElementById('amount').value;
+            const floatPattern = /^\d+(\.\d{1,2})?$/;
+
+            if (!floatPattern.test(amount)) {
+                alert("Amount should be a number, optionally with up to 2 decimal places.");
+                return false;
+            }
+
+            return true;
+        }
+    </script>
 </head>
 <body>
 <?php include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/header.php'); ?>
@@ -62,7 +86,7 @@ $agreements_result = $conn->query($agreements_query);
     <?php if ($message): ?>
         <p><?= htmlspecialchars($message) ?></p>
     <?php endif; ?>
-    <form method="post">
+    <form method="post" onsubmit="return validateForm()">
         <label for="agreement_id">Agreement ID:</label>
         <select id="agreement_id" name="agreement_id" required>
             <?php while ($agreement = $agreements_result->fetch_assoc()): ?>

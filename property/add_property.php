@@ -14,12 +14,17 @@ $user_id = $_SESSION['user_id'];
 $is_admin = check_user_role($conn, $user_id, 'administrator');
 $is_owner = check_user_role($conn, $user_id, 'owner');
 
+$message = '';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $errors = [];
+
     if ($is_admin) {
         $owner_id = sanitize_input($_POST["owner_id"]);
     } else if ($is_owner) {
         $owner_id = $user_id;
     }
+
     $street = sanitize_input($_POST["street"]);
     $city = sanitize_input($_POST["city"]);
     $state = sanitize_input($_POST["state"]);
@@ -31,24 +36,55 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $rental_price = sanitize_input($_POST["rental_price"]);
     $description = sanitize_input($_POST["description"]);
 
-    $stmt = $conn->prepare("INSERT INTO Addresses (street, city, state, postal_code, country) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssss", $street, $city, $state, $postal_code, $country);
-    if ($stmt->execute()) {
-        $address_id = $stmt->insert_id;
-
-        $stmt = $conn->prepare("INSERT INTO Properties (owner_id, address_id, type_id, number_of_rooms, size, rental_price, description) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("iiidsss", $owner_id, $address_id, $type_id, $number_of_rooms, $size, $rental_price, $description);
-        if ($stmt->execute()) {
-            echo "Property added successfully!";
-            header("Location: /apartmentmanagement/property/view_property.php");
-            exit();
-        } else {
-            echo "Error: " . $stmt->error;
-        }
-    } else {
-        echo "Error: " . $stmt->error;
+    // Validate city, state, and country (no digits or special characters)
+    if (!preg_match("/^[a-zA-Z\s]+$/", $city)) {
+        $errors[] = "City name should only contain letters and spaces.";
     }
-    $stmt->close();
+    if (!preg_match("/^[a-zA-Z\s]+$/", $state)) {
+        $errors[] = "State name should only contain letters and spaces.";
+    }
+    if (!preg_match("/^[a-zA-Z\s]+$/", $country)) {
+        $errors[] = "Country name should only contain letters and spaces.";
+    }
+
+    // Validate postal code (example format: 12345 or 12345-6789)
+    if (!preg_match("/^\d{5}(-\d{4})?$/", $postal_code)) {
+        $errors[] = "Invalid postal code format.";
+    }
+
+    // Validate number of rooms, size, and rental price (only numbers)
+    if (!preg_match("/^\d+$/", $number_of_rooms)) {
+        $errors[] = "Number of rooms should only contain digits.";
+    }
+    if (!preg_match("/^\d+(\.\d{1,2})?$/", $size)) {
+        $errors[] = "Size should be a number, optionally with up to 2 decimal places.";
+    }
+    if (!preg_match("/^\d+(\.\d{1,2})?$/", $rental_price)) {
+        $errors[] = "Rental price should be a number, optionally with up to 2 decimal places.";
+    }
+
+    if (empty($errors)) {
+        $stmt = $conn->prepare("INSERT INTO Addresses (street, city, state, postal_code, country) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssss", $street, $city, $state, $postal_code, $country);
+        if ($stmt->execute()) {
+            $address_id = $stmt->insert_id;
+
+            $stmt = $conn->prepare("INSERT INTO Properties (owner_id, address_id, type_id, number_of_rooms, size, rental_price, description) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("iiidsss", $owner_id, $address_id, $type_id, $number_of_rooms, $size, $rental_price, $description);
+            if ($stmt->execute()) {
+                echo "Property added successfully!";
+                header("Location: /apartmentmanagement/property/view_property.php");
+                exit();
+            } else {
+                $message = "Error: " . $stmt->error;
+            }
+        } else {
+            $message = "Error: " . $stmt->error;
+        }
+        $stmt->close();
+    } else {
+        $message = implode("<br>", $errors);
+    }
 }
 ?>
 
@@ -59,13 +95,65 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Property</title>
     <link rel="stylesheet" type="text/css" href="/apartmentmanagement/css/styles.css">
+    <script>
+        function validateForm() {
+            const city = document.getElementById('city').value;
+            const state = document.getElementById('state').value;
+            const country = document.getElementById('country').value;
+            const postalCode = document.getElementById('postal_code').value;
+            const numberOfRooms = document.getElementById('number_of_rooms').value;
+            const size = document.getElementById('size').value;
+            const rentalPrice = document.getElementById('rental_price').value;
+
+            const errors = [];
+
+            const namePattern = /^[a-zA-Z\s]+$/;
+            if (!namePattern.test(city)) {
+                errors.push("City name should only contain letters and spaces.");
+            }
+            if (!namePattern.test(state)) {
+                errors.push("State name should only contain letters and spaces.");
+            }
+            if (!namePattern.test(country)) {
+                errors.push("Country name should only contain letters and spaces.");
+            }
+
+            const postalCodePattern = /^\d{5}(-\d{4})?$/;
+            if (!postalCodePattern.test(postalCode)) {
+                errors.push("Invalid postal code format.");
+            }
+
+            const numberPattern = /^\d+$/;
+            if (!numberPattern.test(numberOfRooms)) {
+                errors.push("Number of rooms should only contain digits.");
+            }
+
+            const floatPattern = /^\d+(\.\d{1,2})?$/;
+            if (!floatPattern.test(size)) {
+                errors.push("Size should be a number, optionally with up to 2 decimal places.");
+            }
+            if (!floatPattern.test(rentalPrice)) {
+                errors.push("Rental price should be a number, optionally with up to 2 decimal places.");
+            }
+
+            if (errors.length > 0) {
+                alert(errors.join("\n"));
+                return false;
+            }
+
+            return true;
+        }
+    </script>
 </head>
 <body>
     <?php include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/header.php'); ?>
 
     <main>
         <h2>Add Property</h2>
-        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        <?php if ($message): ?>
+            <p><?= $message ?></p>
+        <?php endif; ?>
+        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" onsubmit="return validateForm()">
             <?php if ($is_admin): ?>
                 <label for="owner_id">Owner:</label>
                 <select name="owner_id" id="owner_id" required>
