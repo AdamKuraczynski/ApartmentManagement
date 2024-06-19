@@ -40,6 +40,8 @@ if ($property_id) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && $property_id) {
+    $errors = [];
+    
     $street = sanitize_input($_POST['street']);
     $city = sanitize_input($_POST['city']);
     $postal_code = sanitize_input($_POST['postal_code']);
@@ -54,41 +56,69 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $property_id) {
         $owner_id = sanitize_input($_POST['owner_id']);
     }
 
-    $check_address_query = "SELECT address_id FROM Addresses WHERE street = ? AND city = ? AND postal_code = ? AND country = ?";
-    $stmt = $conn->prepare($check_address_query);
-    $stmt->bind_param("ssss", $street, $city, $postal_code, $country);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        $address = $result->fetch_assoc();
-        $new_address_id = $address['address_id'];
-    } else {
-        $insert_address_query = "INSERT INTO Addresses (street, city, postal_code, country) VALUES (?, ?, ?, ?)";
-        $stmt = $conn->prepare($insert_address_query);
-        $stmt->bind_param("ssss", $street, $city, $postal_code, $country);
-        if ($stmt->execute()) {
-            $new_address_id = $stmt->insert_id;
-        } else {
-            $message = "Error: " . $conn->error;
-        }
+    // Validate city, country (no digits or special characters)
+    if (!preg_match("/^[a-zA-Z\s]+$/", $city)) {
+        $errors[] = "City name should only contain letters and spaces.";
+    }
+    if (!preg_match("/^[a-zA-Z\s]+$/", $country)) {
+        $errors[] = "Country name should only contain letters and spaces.";
     }
 
-    if (isset($new_address_id)) {
-        $update_query = "UPDATE Properties SET address_id = ?, type_id = ?, number_of_rooms = ?, size = ?, rental_price = ?, description = ?" . ($is_admin ? ", owner_id = ?" : "") . " WHERE property_id = ?";
-        $stmt = $conn->prepare($update_query);
+    // Validate postal code (example format: 12345 or 12345-6789)
+    if (!preg_match("/^\d{5}(-\d{4})?$/", $postal_code)) {
+        $errors[] = "Invalid postal code format.";
+    }
 
-        if ($is_admin) {
-            $stmt->bind_param("iiidssii", $new_address_id, $type_id, $number_of_rooms, $size, $rental_price, $description, $owner_id, $property_id);
+    // Validate number of rooms, size, and rental price (only numbers)
+    if (!preg_match("/^\d+$/", $number_of_rooms)) {
+        $errors[] = "Number of rooms should only contain digits.";
+    }
+    if (!preg_match("/^\d+(\.\d{1,2})?$/", $size)) {
+        $errors[] = "Size should be a number, optionally with up to 2 decimal places.";
+    }
+    if (!preg_match("/^\d+(\.\d{1,2})?$/", $rental_price)) {
+        $errors[] = "Rental price should be a number, optionally with up to 2 decimal places.";
+    }
+
+    if (empty($errors)) {
+        $check_address_query = "SELECT address_id FROM Addresses WHERE street = ? AND city = ? AND postal_code = ? AND country = ?";
+        $stmt = $conn->prepare($check_address_query);
+        $stmt->bind_param("ssss", $street, $city, $postal_code, $country);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $address = $result->fetch_assoc();
+            $new_address_id = $address['address_id'];
         } else {
-            $stmt->bind_param("iiidssi", $new_address_id, $type_id, $number_of_rooms, $size, $rental_price, $description, $property_id);
+            $insert_address_query = "INSERT INTO Addresses (street, city, postal_code, country) VALUES (?, ?, ?, ?)";
+            $stmt = $conn->prepare($insert_address_query);
+            $stmt->bind_param("ssss", $street, $city, $postal_code, $country);
+            if ($stmt->execute()) {
+                $new_address_id = $stmt->insert_id;
+            } else {
+                $message = "Error: " . $conn->error;
+            }
         }
 
-        if ($stmt->execute()) {
-            $message = "Successfully updated property.";
-        } else {
-            $message = "Error: " . $conn->error;
+        if (isset($new_address_id)) {
+            $update_query = "UPDATE Properties SET address_id = ?, type_id = ?, number_of_rooms = ?, size = ?, rental_price = ?, description = ?" . ($is_admin ? ", owner_id = ?" : "") . " WHERE property_id = ?";
+            $stmt = $conn->prepare($update_query);
+
+            if ($is_admin) {
+                $stmt->bind_param("iiidssii", $new_address_id, $type_id, $number_of_rooms, $size, $rental_price, $description, $owner_id, $property_id);
+            } else {
+                $stmt->bind_param("iiidssi", $new_address_id, $type_id, $number_of_rooms, $size, $rental_price, $description, $property_id);
+            }
+
+            if ($stmt->execute()) {
+                $message = "Successfully updated property.";
+            } else {
+                $message = "Error: " . $conn->error;
+            }
         }
+    } else {
+        $message = implode("<br>", $errors);
     }
 }
 
@@ -117,6 +147,51 @@ if ($is_admin) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Property</title>
     <link rel="stylesheet" type="text/css" href="/apartmentmanagement/css/styles.css">
+    <script>
+        function validateForm() {
+            const city = document.getElementById('city').value;
+            const country = document.getElementById('country').value;
+            const postalCode = document.getElementById('postal_code').value;
+            const numberOfRooms = document.getElementById('number_of_rooms').value;
+            const size = document.getElementById('size').value;
+            const rentalPrice = document.getElementById('rental_price').value;
+
+            const errors = [];
+
+            const namePattern = /^[a-zA-Z\s]+$/;
+            if (!namePattern.test(city)) {
+                errors.push("City name should only contain letters and spaces.");
+            }
+            if (!namePattern.test(country)) {
+                errors.push("Country name should only contain letters and spaces.");
+            }
+
+            const postalCodePattern = /^\d{5}(-\d{4})?$/;
+            if (!postalCodePattern.test(postalCode)) {
+                errors.push("Invalid postal code format.");
+            }
+
+            const numberPattern = /^\d+$/;
+            if (!numberPattern.test(numberOfRooms)) {
+                errors.push("Number of rooms should only contain digits.");
+            }
+
+            const floatPattern = /^\d+(\.\d{1,2})?$/;
+            if (!floatPattern.test(size)) {
+                errors.push("Size should be a number, optionally with up to 2 decimal places.");
+            }
+            if (!floatPattern.test(rentalPrice)) {
+                errors.push("Rental price should be a number, optionally with up to 2 decimal places.");
+            }
+
+            if (errors.length > 0) {
+                alert(errors.join("\n"));
+                return false;
+            }
+
+            return true;
+        }
+    </script>
 </head>
 <body>
 <?php include($_SERVER['DOCUMENT_ROOT'] . '/ApartmentManagement/includes/header.php'); ?>
