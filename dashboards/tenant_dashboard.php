@@ -23,23 +23,23 @@ if (!isset($_SESSION['user_id']) || !check_user_role($conn, $_SESSION['user_id']
         <div class="dashboard">
         <h3>My Rental</h3>
             <ul>
-                <li><a href="../property/view_property.php">View Property</a></li>
-                <li><a href="../rental/view_agreement.php">View Rental Agreement</a></li>
+                <li><a href="../property/view_property.php">View Properties</a></li>
+                <li><a href="../rental/view_agreement.php">View Rental Agreements</a></li>
             </ul>
             <h3>Maintenance Tasks</h3>
             <ul>
                 <li><a href="../maintenance/add_task.php">Add Maintenance Task</a></li>
-                <li><a href="../maintenance/view_task.php">View Maintenance Task</a></li>
+                <li><a href="../maintenance/view_task.php">View Maintenance Tasks</a></li>
             </ul>
-            <h3> Manage payments</h3>
+            <h3> Payments </h3>
             <ul>
-                <li><a href="../payments/view_payment.php">View Payment</a></li>
+                <li><a href="../payments/view_payment.php">View Payments</a></li>
             </ul> 
-            <h3>Manage documents</h3>
+            <h3>Documents</h3>
             <ul>
-                <li><a href="../documents/view_document.php">View Document</a></li>
+                <li><a href="../documents/view_document.php">View Documents</a></li>
             </ul>
-            <h3>Manage notifications</h3>
+            <h3>Notifications</h3>
             <ul>
                 <li><a href="../notifications/view_notifications.php">View Notifications</a></li>
             </ul>
