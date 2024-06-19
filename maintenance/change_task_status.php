@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $resolved_at = date('Y-m-d H:i:s');
     $cost = isset($_POST['cost']) ? sanitize_input($_POST['cost']) : null;
 
-    if ($cost) {
+    if ($cost !== null) {
         $query = "UPDATE MaintenanceTasks SET status_id = ?, cost = ?, resolved_at = ? WHERE task_id = ?";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("idsi", $status_id, $cost, $resolved_at, $task_id);

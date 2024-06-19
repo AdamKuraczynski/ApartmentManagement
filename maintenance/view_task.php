@@ -67,8 +67,32 @@ $result = $stmt->get_result();
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
     <script src="/apartmentmanagement/js/scripts.js"></script>
     <script>
-        $(document).ready(function() {
-    $('.mark-as-solved, .change-status').on('click', function() {
+$(document).ready(function() {
+    $('.mark-as-solved').on('click', function() {
+        var taskId = $(this).data('task-id');
+        var popupHtml = '<div id="popup">' +
+                        '<p>Mark this task as solved?</p>' +
+                        '<div id="Popupbuttons"><br><button id="confirm">Confirm</button>' +
+                        '<button id="cancel">Cancel</button></div>' +
+                        '</div>';
+        $('body').append(popupHtml);
+        $('#confirm').on('click', function() {
+            $.ajax({
+                url: '/apartmentmanagement/maintenance/change_task_status.php',
+                method: 'POST',
+                data: { task_id: taskId, status_id: 3 }, // Zakładając, że status "Solved" ma id 3
+                success: function(response) {
+                    alert(response);
+                    location.reload();
+                }
+            });
+        });
+        $('#cancel').on('click', function() {
+            $('#popup').remove();
+        });
+    });
+
+    $('.change-status').on('click', function() {
         var taskId = $(this).data('task-id');
         var currentStatus = $(this).data('status-id');
         var isOwner = $(this).data('is-owner');
@@ -96,6 +120,7 @@ $result = $stmt->get_result();
                 method: 'POST',
                 data: { task_id: taskId, status_id: newStatus, cost: cost },
                 success: function(response) {
+                    alert(response);
                     location.reload();
                 }
             });
@@ -105,7 +130,8 @@ $result = $stmt->get_result();
         });
     });
 });
-    </script>
+</script>
+
 </head>
 <body>
     <?php include('../includes/header.php'); ?>
